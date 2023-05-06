@@ -1,0 +1,330 @@
+{
+  "highway": {
+    "__comment__": "high speed",
+    "map": "Town04",
+    "ego_veh": {
+      "type": "vehicle.audi.a2",
+      "road_id": 45,
+      "lane_id": [
+        -1, -2, -3, -4
+      ],
+      "start_pos": [
+        100,
+        110
+      ],
+      "speed": -180
+    },
+    "same_dir_veh": [
+      {
+        "num": 20,
+        "type": 0,
+        "road_id": 45,
+        "lane_id": [
+          -1, -2, -3, -4
+        ],
+        "start_pos": [
+          115,
+          300
+        ],
+        "speed": [-60, -120],
+        "beam_ratio": 0.5
+      }
+    ],
+    "oppo_dir_veh": [],
+    "special_veh": [],
+    "walker": [],
+    "walker_behavior": {}
+  },
+  "narrow": {
+    "__comment__": "a long narrow road with trees surrounded",
+    "map": "Town07",
+    "ego_veh": {
+      "type_bak": "vehicle.tesla.model3",
+      "type": "vehicle.audi.a2",
+      "road_id": 20,
+      "lane_id": [
+        -1
+      ],
+      "start_pos": [
+        0.2,
+        2.2
+      ],
+      "speed": -30
+    },
+    "same_dir_veh": [],
+    "oppo_dir_veh": [
+      {
+        "num": 6,
+        "type": 0,
+        "road_id": 20,
+        "lane_id": [
+          1
+        ],
+        "start_pos": [
+          5,
+          220
+        ],
+        "speed": [-30, -60],
+        "beam_ratio": 0.5
+      }
+    ],
+    "special_veh": [],
+    "walker": [],
+    "walker_behavior": {}
+  },
+  "jaywalk": {
+    "__comment__": "some walker",
+    "map": "Town01",
+    "ego_veh": {
+      "type": "vehicle.audi.a2",
+      "road_id": 12,
+      "lane_id": [
+        -1
+      ],
+      "start_pos": [
+        0.2,
+        2.2
+      ],
+      "speed": -20
+    },
+    "same_dir_veh": [],
+    "oppo_dir_veh": [],
+    "special_veh": [],
+    "walker": [
+      {
+        "num": 1,
+        "road_id": 12,
+        "lane_id": [
+          -3
+        ],
+        "start_pos": [
+          20,
+          22
+        ]
+      },
+      {
+        "num": 1,
+        "road_id": 12,
+        "lane_id": [
+          3
+        ],
+        "start_pos": [
+          20,
+          22
+        ]
+      },
+      {
+        "num": 1,
+        "road_id": 12,
+        "lane_id": [
+          -3
+        ],
+        "start_pos": [
+          100,
+          102
+        ]
+      },
+      {
+        "num": 1,
+        "road_id": 12,
+        "lane_id": [
+          3
+        ],
+        "start_pos": [
+          100,
+          102
+        ]
+      }
+    ],
+    "walker_behavior": {
+      "speed": [1, 8],
+      "secure_dis": 12,
+      "cross_prob": 0.5,
+      "border": {
+        "x": [110, 280],
+        "y": [191, 203]
+      }
+    }
+  },
+  "tunnel": {
+    "__comment__": "",
+    "map": "Town03",
+    "ego_veh": {
+      "type": "vehicle.audi.a2",
+      "road_id": 1166,
+      "lane_id": [
+        2,
+        3
+      ],
+      "start_pos": [
+        30,
+        32
+      ],
+      "speed": -100
+    },
+    "same_dir_veh": [
+      {
+        "num": 4,
+        "type": 0,
+        "road_id": 65,
+        "lane_id": [
+          2,
+          3
+        ],
+        "start_pos": [
+          10,
+          220
+        ],
+        "speed": [-30, -60],
+        "beam_ratio": 0.5
+      }
+    ],
+    "oppo_dir_veh": [
+      {
+        "num": 6,
+        "type": 0,
+        "road_id": 65,
+        "lane_id": [
+          -1,
+          -2
+        ],
+        "start_pos": [
+          5,
+          220
+        ],
+        "speed": [-30, -60],
+        "beam_ratio": 0.5
+      },
+      {
+        "num": 6,
+        "type": 0,
+        "road_id": 0,
+        "lane_id": [
+          1,
+          2,
+          3
+        ],
+        "start_pos": [
+          2,
+          40
+        ],
+        "speed": [-30, -60],
+        "beam_ratio": 0.5
+      }
+    ],
+    "special_veh": [],
+    "walker": [],
+    "walker_behavior": {}
+  },
+  "crash": {
+    "__comment__": "static vehicle obstacles",
+    "map": "Town04",
+    "ego_veh": {
+      "type": "vehicle.audi.a2",
+      "road_id": 45,
+      "lane_id": [
+        -1, -2, -3, -4
+      ],
+      "start_pos": [
+        145,
+        155
+      ],
+      "speed": -20
+    },
+    "same_dir_veh": [],
+    "oppo_dir_veh": [],
+    "special_veh": [
+      {
+        "num": 2,
+        "type": 0,
+        "color": "0,0,0",
+        "road_id": 45,
+        "lane_id": [
+          -1, -2, -3, -4
+        ],
+        "start_pos": [
+          175,
+          195
+        ],
+        "pitch_range": [-180, -180],
+        "yaw_range": [-30, 30],
+        "roll_range": 0,
+        "beam_ratio": 0
+      },
+      {
+        "num": 2,
+        "type": 0,
+        "color": "0,0,0",
+        "road_id": 45,
+        "lane_id": [
+          -1, -2, -3, -4
+        ],
+        "start_pos": [
+          225,
+          245
+        ],
+        "pitch_range": [-180, -180],
+        "yaw_range": [-30, 30],
+        "roll_range": 0,
+        "beam_ratio": 0
+      }
+    ],
+    "walker": [],
+    "walker_behavior": {}
+  },
+  "highbeam": {
+    "__comment__": "the opposite vehicles turn on the high-beam lights",
+    "map": "Town01",
+    "ego_veh": {
+      "type": "vehicle.audi.a2",
+      "road_id": 12,
+      "lane_id": [
+        -1
+      ],
+      "start_pos": [
+        0.2,
+        2.2
+      ],
+      "speed": -20
+    },
+    "same_dir_veh": [],
+    "oppo_dir_veh": [
+      {
+        "num": 3,
+        "type": ["vehicle.carlamotors.firetruck", "vehicle.audi.tt", "vehicle.dodge.charger_police",
+                 "vehicle.dodge.charger_2020", "vehicle.audi.etron", "vehicle.ford.ambulance"],
+        "road_id": 12,
+        "lane_id": [
+          1
+        ],
+        "start_pos": [
+          15,
+          120
+        ],
+        "speed": [-30, -60],
+        "beam_ratio": 1.0
+      }
+    ],
+    "special_veh": [
+      {
+        "num": 1,
+        "type": "vehicle.bh.crossbike",
+        "color": 0,
+        "road_id": 12,
+        "lane_id": [
+          -1
+        ],
+        "start_pos": [
+          30,
+          35
+        ],
+        "pitch_range": 0,
+        "yaw_range": [-30, 30],
+        "roll_range": 0,
+        "beam_ratio": 0
+      }
+    ],
+    "walker": [],
+    "walker_behavior": {}
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "crash_extreme_weather": {
+    "__comment__": "midday",
+    "cloudiness": 0,
+    "precipitation": 0,
+    "precipitation_deposits": 0,
+    "wind_intensity": 0,
+    "fog_density": 0,
+    "fog_distance": 0,
+    "wetness": 50,
+    "sun_azimuth_angle": 200,
+    "sun_altitude_angle": 25
+  },
+  "hard_high_light": {
+    "__comment__": "midday",
+    "cloudiness": 0,
+    "precipitation": 0,
+    "precipitation_deposits": 0,
+    "wind_intensity": 0,
+    "fog_density": 0,
+    "fog_distance": 0,
+    "wetness": 50,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": 90
+  },
+  "soft_high_light": {
+    "__comment__": "normal sunny",
+    "cloudiness": 20,
+    "precipitation": 0,
+    "precipitation_deposits": 0,
+    "wind_intensity": 0,
+    "fog_density": 20,
+    "fog_distance": 0,
+    "wetness": 0,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": 10
+  },
+  "soft_low_light": {
+    "__comment__": "soft foggy + midday",
+    "cloudiness": 50,
+    "precipitation": 0,
+    "precipitation_deposits": 0,
+    "wind_intensity": 0,
+    "fog_density": 30,
+    "fog_distance": 0,
+    "wetness": 0,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": 5
+  },
+  "hard_low_light": {
+    "__comment__": "foggy + midnight",
+    "cloudiness": 100,
+    "precipitation": 0,
+    "precipitation_deposits": 0,
+    "wind_intensity": 0,
+    "fog_density": 100,
+    "fog_distance": 0,
+    "wetness": 0,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": -90
+  },
+  "soft_noisy_low_light": {
+    "__comment__": "foggy + rainy + midday",
+    "cloudiness": 80,
+    "precipitation": 50,
+    "precipitation_deposits": 50,
+    "wind_intensity": 0,
+    "fog_density": 30,
+    "fog_distance": 0,
+    "wetness": 0,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": 20
+  },
+  "hard_noisy_low_light": {
+    "__comment__": "foggy + rainy + midday",
+    "cloudiness": 100,
+    "precipitation": 100,
+    "precipitation_deposits": 100,
+    "wind_intensity": 100,
+    "fog_density": 100,
+    "fog_distance": 0,
+    "wetness": 0,
+    "sun_azimuth_angle": 0,
+    "sun_altitude_angle": -90
+  }
+}
