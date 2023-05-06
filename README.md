@@ -1,6 +1,7 @@
 
-# TM3DP: A Triune Multi-Nodal Markov Decision Process for Visuomotor Reinforcement Learning
+# TM3DP: A Triune Multi-Modal Markov Decision Process for Visuomotor Reinforcement Learning
 
+# Event- and Frame-based Cameras for Multi-Modal Reinforcement Learning in Harsh Weahter Conditions
 
 ## 1st. Install environment from scratch
 
