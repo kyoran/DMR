@@ -2,7 +2,7 @@
 # TM3DP: A Triune Multi-Nodal Markov Decision Process for Visuomotor Reinforcement Learning
 
 
-#### Install environment from scratch
+## Install environment from scratch
 
 ### install cuda and cudnn (optional)
 - install cuda 11.7.0 from: https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=18.04&target_type=runfile_local
