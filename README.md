@@ -2,7 +2,7 @@
 # TM3DP: A Triune Multi-Nodal Markov Decision Process for Visuomotor Reinforcement Learning
 
 
-## Install environment from scratch
+## 1st. Install environment from scratch
 
 ### install cuda and cudnn (optional)
 - install cuda 11.7.0 from: https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=18.04&target_type=runfile_local
@@ -80,3 +80,9 @@ sudo apt-get install -y xserver-xorg mesa-utils libvulkan1  # install vulkan fir
 DISPLAY= ./CarlaUE4.sh -vulkan -nosound -RenderOffscreen -carla-rpc-port=12121
 ```
 
+## 2nd. running baseline methods or ours
+
+```shell
+chmod +x auto_run_batch_modal.sh
+./auto_run_batch_modal.sh
+```
