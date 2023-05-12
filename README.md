@@ -1,7 +1,5 @@
 
-# TM3DP: A Triune Multi-Modal Markov Decision Process for Visuomotor Reinforcement Learning
-
-# Event- and Frame-based Cameras for Multi-Modal Reinforcement Learning in Harsh Weahter Conditions
+# DM3DP: A Decomposed Multi-Modal Markov Decision Process for Visuomotor Reinforcement Learning
 
 ## 1st. Install environment from scratch
 
@@ -40,7 +38,7 @@ bash Anaconda3-5.3.1-Linux-x86_64.sh (install anaconda3 by following the instruc
 conda create -n carla-py37 python=3.7
 conda activate carla-py37
 pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
-pip install opencv-python==4.7.0.72 gym==0.19.0 imageio==2.28.0 dotmap==1.3.30 termcolor==2.3.0\
+pip install opencv-python==4.7.0.72 gym==0.19.0 imageio==2.28.0 dotmap==1.3.30 termcolor==2.3.0 \
  matplotlib==3.5.3 scipy==1.7.3 info-nce-pytorch==0.1.4 tensorboard -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
@@ -77,7 +75,7 @@ DISPLAY= ./CarlaUE4.sh -opengl -RenderOffScreen -carla-rpc-port=12121
 
 *Note*: if your operation system do not support opengl, try using:
 ```shell
-sudo apt-get install -y xserver-xorg mesa-utils libvulkan1  # install vulkan first
+sudo apt-get update && sudo apt-get install -y --fix-missing xserver-xorg mesa-utils libvulkan1 libomp5 # install vulkan first
 DISPLAY= ./CarlaUE4.sh -vulkan -nosound -RenderOffscreen -carla-rpc-port=12121
 ```
 
