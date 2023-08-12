@@ -1,5 +1,5 @@
 
-# DM3DP: A Decomposed Multi-Modal Markov Decision Process for Visuomotor Reinforcement Learning
+# Decomposed Representations for RGB and Event Fusion in Visual Reinforcement Learning
 
 ## 1st. Install environment from scratch
 
