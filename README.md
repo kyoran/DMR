@@ -57,11 +57,11 @@ policy performance compared to state-of-the-art approaches.
 <table>
 <tr>
     <td align="center" width="20%">
-        <img src="https://github.com/kyoran/DMR/blob/main/vendors/rgb.png" alt="rgb"/><br/>
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb.png"/><br/>
         <br/>
     </td>
     <td align="center" width="20%">
-        <img src="https://github.com/kyoran/DMR/blob/main/vendors/dvs.png" alt="dvs"/><br/>
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/><br/>
         <br/>
     </td>
     <td align="center" width="60%"></td>
