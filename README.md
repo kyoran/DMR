@@ -57,12 +57,10 @@ policy performance compared to state-of-the-art approaches.
 <table>
 <tr>
     <td align="center" width="20%">
-        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb.png"/><br/>
-        <br/>
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb.png"/>
     </td>
     <td align="center" width="20%">
-        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/><br/>
-        <br/>
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/>
     </td>
     <td align="center" width="60%" rowspan="3">
         (i) First row depicts the original observations and corresponding CAMs of DMR. 
@@ -77,12 +75,20 @@ policy performance compared to state-of-the-art approaches.
     </td>
 </tr>
 <tr>
-    <td align="center" width="40%"></td>
-    <td align="center" width="60%"></td>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb-noise.png"/>
+    </td>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs-noise.png"/>
+    </td>
 </tr>
 <tr>
-    <td align="center" width="40%"></td>
-    <td align="center" width="60%"></td>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-rgb.png"/>
+    </td>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
+    </td>
 </tr>
 </table>
 </div>
