@@ -3,6 +3,8 @@
 
 This repository contains the official code from ''DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning''
 
+- [2022/11/18]: DMR is currently under review for CVPR 2024.
+
 
 ## Abstract
 We explore visual reinforcement learning (RL) using two complementary visual modalities: 
@@ -30,6 +32,21 @@ policy performance compared to state-of-the-art approaches.
 
 
 ## Several typical visual examples
+
+<div align="center">
+<table>
+<tr>
+    <td align="center" width="45%"><img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
+        alt="motivation"/><br><b><i>Fig 2. Frames and events based RL.</i></b></td>
+    <td align="center" width="55%">
+        (i) In the first row, insufficient ambient light causes RGB underexposure, leading to the overlooking of the front pedestrian and resulting in a forward policy aligned with the lane direction that could cause collisions.
+        (ii) In the second row, the lack of texture in DVS causes the person and the background to blend, leading to a left-turn policy to avoid the highlighted area on the right.
+        (iii) In contrast, our method (third row) can fully take advantage of RGB and DVS to extract task-relevant information and eliminate task-irrelevant and noisy information through joint TD and DMR learning, thereby obtaining an optimal evasion policy. 
+    </td>
+</tr>
+</table>
+</div>
+
 
 <div align=center>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
