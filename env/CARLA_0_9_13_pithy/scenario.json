@@ -13,7 +13,7 @@
         100,
         110
       ],
-      "speed": -80
+      "speed": -200
     },
     "same_dir_veh": [
       {
@@ -164,13 +164,18 @@
     "map": "Town04",
     "ego_veh": {
       "type": "vehicle.tesla.model3",
-      "road_id": 45,
+      "road_id": 46,
+      "road_id_111": 45,
       "lane_id": [
         -1, -2, -3, -4
       ],
-      "start_pos": [
+      "start_pos_111": [
         100,
         110
+      ],
+      "start_pos": [
+        15,
+        70
       ],
       "speed": -180
     },
@@ -244,6 +249,10 @@
       "start_pos": [
         0.2,
         2.2
+      ],
+      "start_pos_bak": [
+        4,
+        4.2
       ],
       "speed": -20
     },
@@ -362,7 +371,6 @@
     "walker": [],
     "walker_behavior": {}
   },
-
   "narrow": {
     "__comment__": "a long narrow road with trees surrounded",
     "map": "Town07",

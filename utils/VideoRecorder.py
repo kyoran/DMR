@@ -124,7 +124,7 @@ class VideoRecorder(object):
                 if type == "mp4":
                     imageio.mimsave(rgb_frames_path, self.rgb_frames, fps=self.min_fps, macro_block_size=2)
                 elif type == "gif":
-                    imageio.mimsave(rgb_frames_path, self.rgb_frames, duration=1 / self.min_fps)
+                    imageio.mimsave(rgb_frames_path, self.rgb_frames, duration=1 / self.max_fps)
 
             if len(self.dvs_frames) > 0:
                 if type == "mp4":

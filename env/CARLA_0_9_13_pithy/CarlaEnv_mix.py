@@ -9,6 +9,7 @@ sudo docker run --privileged --user carla --gpus all --net=host -e DISPLAY=$DISP
 import carla
 
 import os
+import cv2
 import sys
 import time
 import math
@@ -18,8 +19,6 @@ import numpy as np
 from copy import deepcopy
 from dotmap import DotMap
 
-from denoise.event_process import dist_main_noise
-from denoise.Contrast_Maximization import contra_max
 
 class CarlaEnv(object):
 
@@ -27,11 +26,11 @@ class CarlaEnv(object):
                  weather_params, scenario_params,
                  selected_weather, selected_scenario,
                  carla_rpc_port, carla_tm_port, carla_timeout,
-                 perception_type, num_cameras, rl_image_size, fov,
-                 max_fps, min_fps, device,
+                 perception_type, num_cameras, rl_image_size,
+                 fov, max_fps, min_fps, device,
                  min_stuck_steps, max_episode_steps, frame_skip,
                  DENOISE=False, is_spectator=False, ego_auto_pilot=False,
-                 dvs_rec_args=None, TPV=False, BEV=False
+                 TPV=False, BEV=False
                  ):
 
         self.device = device
@@ -69,27 +68,6 @@ class CarlaEnv(object):
 
         # rgb-frame, dvs-rec-frame, dvs-stream, dvs-vidar-stream
         self.perception_type = perception_type  # ↑↑↑↑↑↑↑↑↑
-        if self.perception_type.__contains__("E2VID"):
-            assert dvs_rec_args, "missing necessary param: [dvs_rec_args]"
-
-            self.dvs_rec_args = dvs_rec_args
-
-            sys.path.append("./tools/rpg_e2vid")
-            # from tools.rpg_e2vid.run_dvs_rec import run_dvs_rec
-            # from run_dvs_rec import run_dvs_rec
-            # from tools.rpg_e2vid.e2vid_utils.loading_utils import load_model, get_device
-            from e2vid_utils.loading_utils import load_model, get_device
-
-            # Load model
-            self.rec_model = load_model(self.dvs_rec_args.path_to_model)
-            self.device = get_device(self.dvs_rec_args.use_gpu)
-            self.rec_model = self.rec_model.to(self.device)
-            self.rec_model .eval()
-
-        elif self.perception_type == "vidar-rec-frame":
-            sys.path.append("./tools/vidar2frame")
-            # vidar reconstruction do not need to load a model
-
 
         # client init
         self.client = carla.Client('localhost', self.carla_rpc_port)
@@ -141,6 +119,7 @@ class CarlaEnv(object):
         self.rgb_camera_bp.set_attribute('enable_postprocess_effects', str(True))   # a set of post-process effects is applied to the image to create a more realistic feel
         self.rgb_camera_bp.set_attribute('exposure_max_bright', '20.0')      # over-exposure
         self.rgb_camera_bp.set_attribute('exposure_min_bright', '12.0')      # under-exposure，默认是10，越小越亮
+        # self.rgb_camera_bp.set_attribute('exposure_min_bright', '9')      # under-exposure，默认是10，越小越亮
         self.rgb_camera_bp.set_attribute('blur_amount', '1.0')
         self.rgb_camera_bp.set_attribute('motion_blur_intensity', '1.0')
         self.rgb_camera_bp.set_attribute('motion_blur_max_distortion', '0.8')
@@ -156,12 +135,12 @@ class CarlaEnv(object):
         self.dvs_camera_bp.set_attribute('sensor_tick', f'{1 / self.max_fps}')
         self.dvs_camera_bp.set_attribute('positive_threshold', str(0.15))      # 光强变化阈值，0.3是默认值，下雨几乎没噪声，0.2时雨点太少，0.1时雨点太多
         self.dvs_camera_bp.set_attribute('negative_threshold', str(0.15))
-        self.dvs_camera_bp.set_attribute('sigma_positive_threshold', str(0.1))  # 白噪声（摄像头自身电器原件噪声）
+        self.dvs_camera_bp.set_attribute('sigma_positive_threshold', str(0.1))  # noise
         self.dvs_camera_bp.set_attribute('sigma_negative_threshold', str(0.1))
         self.dvs_camera_bp.set_attribute('image_size_x', str(self.rl_image_size))
         self.dvs_camera_bp.set_attribute('image_size_y', str(self.rl_image_size))
         # self.dvs_camera_bp.set_attribute('use_log', str(False))
-        self.dvs_camera_bp.set_attribute('use_log', str(True))  # 不用log，变化太大，噪声更多，log平滑曲线，要用log！
+        self.dvs_camera_bp.set_attribute('use_log', str(True))  # using log is more reasonable in reality
         self.dvs_camera_bp.set_attribute('fov', str(self.fov))
         self.dvs_camera_bp.set_attribute('enable_postprocess_effects', str(True))
 
@@ -492,7 +471,10 @@ class CarlaEnv(object):
             toggle1 = set([one_env_obj.id for one_env_obj in env_objs])
             env_objs = self.world.get_environment_objects(carla.CityObjectLabel.Poles)  # street lights
             toggle2 = set([one_env_obj.id for one_env_obj in env_objs])
-            objects_to_toggle = toggle1 | toggle2
+            env_objs = self.world.get_environment_objects(carla.CityObjectLabel.Vegetation)  # 植被
+            toggle3 = set([one_env_obj.id for one_env_obj in env_objs])
+
+            objects_to_toggle = toggle1 | toggle2 | toggle3
             self.world.enable_environment_objects(objects_to_toggle, False)
             self.map = self.world.get_map()
 
@@ -777,6 +759,7 @@ class CarlaEnv(object):
             walker_num = walker_params[one_part]["num"]
 
             while walker_num > 0:
+                random.seed(1231)
                 rand_walker_bp = random.choice(walker_bp)
 
                 spawn_road_id = walker_params[one_part]["road_id"]
@@ -798,9 +781,14 @@ class CarlaEnv(object):
                 if rand_walker_bp.has_attribute('is_invincible'):
                     rand_walker_bp.set_attribute('is_invincible', 'false')
 
+                # if rand_walker_bp.has_attribute('color'):
+                #     color = random.choice(rand_walker_bp.get_attribute('color').recommended_values)
+                #     rand_walker_bp.set_attribute('color', color)
+
                 walker_actor = self.world.try_spawn_actor(rand_walker_bp, walker_pos)
 
                 if walker_actor:
+                    # print(walker_actor.attributes)
                     # walker_controller_bp = self.world.get_blueprint_library().find('controller.ai.walker')
                     # walker_controller_actor = self.world.spawn_actor(
                     #     walker_controller_bp, carla.Transform(), walker_actor)
@@ -965,7 +953,7 @@ class CarlaEnv(object):
                          'img': np.zeros((self.rl_image_size, self.rl_image_size * self.num_cameras, 3), dtype=np.uint8)}
 
         self.depth_data = {'frame': 0, 'timestamp': 0.0,
-                           'img': np.zeros((self.rl_image_size, self.rl_image_size * self.num_cameras, 1), dtype=np.uint8)}
+                            'img': np.zeros((self.rl_image_size, self.rl_image_size * self.num_cameras, 1), dtype=np.uint8)}
 
         self.dvs_data = {'frame': 0, 'timestamp': 0.0,
                          'events': None,
@@ -975,10 +963,18 @@ class CarlaEnv(object):
                          'denoised_img': None,
                          # 'rec-img': np.zeros((self.rl_image_size, self.rl_image_size * self.num_cameras, 1), dtype=np.uint8),
                          }
+
         self.lidar_data = {'frame': 0, 'timestamp': 0.0,
                            'BEV': np.zeros((self.rl_image_size, self.rl_image_size, 1), dtype=np.uint8),
-                           'PCD': None,
-                           }
+                           'PCD': None,}
+
+        # self.dvs_type = dvs_type
+        # self.dvs_param = dvs_param
+        # DVS_TYPE = ASYN_CONSTANT_EVENT_NUMBER
+        # DVS_TYPE = ASYN_CONSTANT_TEMPORAL_WINDOW
+        # DVS_TYPE = SYN_TEMPORAL_WINDOW
+        self.dvs_cache = []
+
 
         self.frame = None
 
@@ -1043,6 +1039,8 @@ class CarlaEnv(object):
         self.rgb_camera.listen(lambda data: __get_rgb_data__(data))
         self.sensor_actors.append(self.rgb_camera)
 
+
+        # Perception Depth sensor
         if self.perception_type.__contains__("Depth"):
             def __get_depth_data__(data):
                 # data.convert(carla.ColorConverter.Depth)
@@ -1064,6 +1062,8 @@ class CarlaEnv(object):
                 attach_to=self.vehicle)
             self.depth_camera.listen(lambda data: __get_depth_data__(data))
             self.sensor_actors.append(self.depth_camera)
+            
+
 
         # Perception DVS sensor
         if self.perception_type.__contains__("DVS"):
@@ -1107,6 +1107,7 @@ class CarlaEnv(object):
             self.dvs_camera.listen(lambda data: __get_dvs_data__(data))
             self.sensor_actors.append(self.dvs_camera)
 
+
         # Perception LiDAR sensor
         if self.perception_type.__contains__("LiDAR"):
             def __get_lidar_data__(data):
@@ -1129,6 +1130,9 @@ class CarlaEnv(object):
                 lidar_img = np.zeros((int(lidar_range), int(lidar_range), 1), dtype=np.uint8)
                 # lidar_img[tuple(pos.T)] = (255, 255, 255)
                 lidar_img[tuple(pos.T)] = 255
+                # resize
+                lidar_img = cv2.resize(lidar_img, (self.rl_image_size, self.rl_image_size))
+                lidar_img = lidar_img[..., np.newaxis]
                 self.lidar_data['BEV'] = lidar_img
 
 
@@ -1138,16 +1142,15 @@ class CarlaEnv(object):
             self.lidar_camera.listen(lambda data: __get_lidar_data__(data))
             self.sensor_actors.append(self.lidar_camera)
 
+
         # Collision Sensor
         self.collision_sensor = self.world.spawn_actor(
             self.collision_bp, carla.Transform(), attach_to=self.vehicle)
         self.collision_sensor.listen(lambda event: self._on_collision(event))
         self._collision_intensities_during_last_time_step = []
-
         self.sensor_actors.append(self.collision_sensor)
-        #         print("set collision done")
 
-        # print("\t collision sensor init done.")
+
         self.world.tick()
 
 
@@ -1183,12 +1186,6 @@ class CarlaEnv(object):
                 break
 
         return next_obs, np.mean(rewards), done, info  # just last info?
-
-
-    def get_reward(self):
-        reward = sum(self.reward)
-        self.reward = []
-        return reward
 
 
     def _control_spectator(self):
@@ -1294,10 +1291,9 @@ class CarlaEnv(object):
 
         next_obs = {
             'RGB-Frame': self.rgb_data['img'],
-            # 'Depth-Frame': self.depth_data['img'],
         }
 
-        next_obs.update({"DVS-Stream": self.dvs_data["events"]})
+        # next_obs.update({"DVS-Stream": self.dvs_data["events"]})
 
 
         if self.TPV:
@@ -1305,157 +1301,6 @@ class CarlaEnv(object):
 
         if self.BEV:
             next_obs.update({'BEV-frame': self.bev_data['img']})
-
-        # DVS denoising ↓↓↓
-        # print(self.dvs_data['events'].shape)
-        if self.DENOISE and self.dvs_data['events'].shape[0] >= 500:
-            # method = "spatial-temporal correlation filter"
-            denoised_img = np.zeros((self.rl_image_size, self.rl_image_size * self.num_cameras, 3), dtype=np.uint8)
-
-            events = self.dvs_data['events']
-            X = events[:, 0]
-            Y = events[:, 1]
-            P = events[:, 2]
-
-            # T = (events[:, 3] - events[0, 3])#  /  (10 ** 6)     # 原本单位是微妙，转为秒
-            T = (events[:, 3] - events[0, 3])  /  (10 ** 3)   # 原本单位是微妙，转为毫秒，下面计算不会出现精度问题
-            # T = (events[:, 3] - events[0, 3])
-            # print("T:", T)
-            # print("unique:", np.unique(self.dvs_data['events'][:, 2]))
-
-            method = "motion consistency filter"
-
-            if method == "motion consistency filter":
-                # ref: Temporal Up-Sampling for Asynchronous Events
-                # highly recommended
-                main_events = []
-                start_time = time.time()
-                # event_num = events.shape[0]      # 不分段
-                # event_num = 5000                 # 分段
-                # event_num = 10000                # 分段
-                event_num = 500                    # 分段
-                num = math.ceil(events.shape[0] / event_num)
-                for k in range(int(num)):
-                    events_at_k = events[k * event_num:(k + 1) * event_num]
-                    x = X[k * event_num:(k + 1) * event_num]
-                    y = Y[k * event_num:(k + 1) * event_num]
-                    p = P[k * event_num:(k + 1) * event_num]
-                    t = T[k * event_num:(k + 1) * event_num]
-
-                    t_ref = np.max(t)   # e.g. 49999870
-                    # print("t_min:", t_min, "t_ref:", t_ref)
-
-                    rangeX, rangeY = self.rl_image_size * self.num_cameras, self.rl_image_size      # 256, 256
-                    flow = contra_max(x, y, p, t, t_ref, rangeX, rangeY)
-                    # print("flow:", flow)
-
-                    ref, nx, ny, mx, my = dist_main_noise(flow, x, y, p, t, t_ref, rangeX, rangeY)
-                    mxy = np.column_stack((mx, my))
-                    # print("xy:", X.shape, Y.shape)
-                    # print("mxy:", mx.shape, my.shape)
-                    # for iii in range(x.shape[0])
-                    for one_event in events_at_k:
-                        for one_mxy in mxy:
-                            # if one_event[0] == one_mxy[0] and one_event[1] == one_mxy[1]:
-                            if np.linalg.norm(one_event[:2] - one_mxy) < 5:   #
-                                main_events.append(one_event)
-                                break
-
-                main_events = np.array(main_events, dtype=np.float32)
-                if main_events.shape[0] != 0:
-                    main_events[:, 2][
-                        np.where(main_events[:, 2] == -1.)
-                    ] = 0       # some bug
-
-
-            elif method == "spatial-temporal correlation filter":
-                # ref: O(N)-Space Spatiotemporal Filter for Reducing Noise in Neuromorphic Vision Sensors
-
-                if len(self.dvs_data['events']) >= 2:
-
-                    # denoising_threshold_t = 100  # 58
-                    # denoising_threshold_t = 1000  #  60
-                    denoising_threshold_t = 10000  # 50
-                    # denoising_threshold_t = 100000  #  64
-                    # denoising_threshold_t = 1000000  #  61
-
-                    valid_event_idxs = set(range(len(self.dvs_data['events'])))
-                    # print("raw:", len(valid_event_idxs))
-
-                    for one_event_idx, one_event in enumerate(self.dvs_data['events']):
-
-                        self.dvs_data['latest_time'][  # 每个像素点上，存储最新事件时间
-                            int(one_event[1]), int(one_event[0])
-                        ] = one_event[3]
-
-                        # latest_time = np.zeros(shape=(self.rl_image_size + 2,
-                        #                               self.rl_image_size*self.num_cameras + 2), dtype=np.float32)
-                        # latest_time[1:self.rl_image_size+1, 1:self.rl_image_size*self.num_cameras+1] = self.dvs_data['latest_time']
-                        latest_time = self.dvs_data['latest_time']
-
-                        # latest_time = np.pad(latest_time, ((1,1), (1,1)), 'constant', constant_values=0)
-                        # print(latest_time.shape)
-                        # kernel_size = 5
-                        h_start = one_event[1] - 1
-                        h_end = one_event[1] + 2
-
-                        w_start = one_event[0] - 1
-                        w_end = one_event[0] + 2
-
-                        if one_event[1] - 1 <= 0:
-                            h_start = 0
-                        if one_event[0] - 1 <= 0:
-                            w_start = 0
-                        if one_event[1] + 2 >= self.rl_image_size:
-                            h_end = one_event[1] + 1
-                        if one_event[0] + 2 >= self.rl_image_size * self.num_cameras:
-                            w_end = one_event[0] + 1
-
-                        tmp = latest_time[  # 当前进来事件周围的情况
-                              int(h_start): int(h_end),
-                              int(w_start): int(w_end),
-                              ]
-                        new_time = np.max(tmp)
-                        #
-                        # if new_time == 0:   # valid
-                        #     pass
-                        # else:
-                        if abs(one_event[3] - new_time) < denoising_threshold_t:  # valid
-                            pass
-                        else:
-                            valid_event_idxs -= {one_event_idx}
-                            # print("delete:", one_event_idx)
-
-                    # print("after:", len(valid_event_idxs))
-                    # print("="*20)
-                    # filter
-                    # print("events:", len(self.dvs_data['events']), "valid_events:", len(valid_event_idxs))
-                    # print("is filter?", len(self.dvs_data['events']) > len(valid_event_idxs))
-                    # print()
-
-                    # if len(valid_event_idxs) in valid_event_idxs:
-                    #     valid_event_idxs.remove(len(valid_event_idxs))
-                    if len(valid_event_idxs) != 0:
-                        self.dvs_data['events'] = self.dvs_data['events'][np.array(list(valid_event_idxs))]
-
-                    # DVS denoising ↑↑↑
-
-                    # Some bug
-                    self.dvs_data['events'][:, 2][
-                        np.where(self.dvs_data['events'][:, 2] == -1.)
-                    ] = 0
-                    self.dvs_data['events'] = self.dvs_data['events'][np.argsort(self.dvs_data['events'][:, -1])]
-
-
-            if main_events.shape[0] == 0:
-                pass
-            else:
-                denoised_img[main_events[:, 1].astype(np.int),
-                    main_events[:, 0].astype(np.int),
-                    main_events[:, 2].astype(np.int) * 2] = 255
-                self.dvs_data['denoised_img'] = denoised_img.copy()
-                self.dvs_data['events'] = main_events.copy()
-            print("raw event number:", events.shape, "denoised event number:", main_events.shape, "spend:", time.time()-start_time, "(s)")
 
 
         if self.perception_type.__contains__("+"):
@@ -1486,7 +1331,7 @@ class CarlaEnv(object):
             elif one_modal == "DVS-Voxel-Grid":
                 next_obs.update({"DVS-Frame": self.dvs_data['img']})
 
-                # (5, 84, 84*num_cam)
+                # (5, 128, 128)
                 num_bins, height, width = 5, self.rl_image_size, int(self.rl_image_size * self.num_cameras)
                 voxel_grid = np.zeros(shape=(num_bins, height, width), dtype=np.float32).ravel()
 
@@ -1536,70 +1381,12 @@ class CarlaEnv(object):
 
                     voxel_grid = voxel_grid.view(num_bins, height, width)
                     voxel_grid = voxel_grid.cpu().numpy()
-
-                    # print("voxel_grid:", np.isnan(voxel_grid).all(), voxel_grid.max(), voxel_grid.min())
-
-                    """ events to np.array
-                    # normalize the event timestamps so that they lie between 0 and num_bins
-                    last_stamp, first_stamp = events[-1, -1], events[0, -1]
-                    deltaT = last_stamp - first_stamp
-
-                    if deltaT == 0:
-                        deltaT = 1.0
-
-                    events[:, -1] = (num_bins - 1) * (events[:, -1] - first_stamp) / deltaT
-                    ts = events[:, -1]
-                    xs = events[:, 0].astype(np.int)
-                    ys = events[:, 1].astype(np.int)
-                    pols = events[:, 2]
-                    pols[pols == 0] = -1  # polarity should be +1 / -1
-
-                    tis = ts.astype(np.int)
-                    dts = ts - tis
-                    vals_left = pols * (1.0 - dts)
-                    vals_right = pols * dts
-
-                    valid_indices = tis < num_bins
-                    np.add.at(voxel_grid,
-                              xs[valid_indices] + ys[valid_indices] * width +
-                              tis[valid_indices] * width * height,
-                              vals_left[valid_indices])
-
-                    valid_indices = (tis + 1) < num_bins
-                    np.add.at(voxel_grid,
-                              xs[valid_indices] + ys[valid_indices] * width +
-                              (tis[valid_indices] + 1) * width * height, vals_right[valid_indices])
-
-                    voxel_grid = np.reshape(voxel_grid, (num_bins, height, width))
-                    """
-
                     # print("voxel_grid:", np.max(voxel_grid), np.min(voxel_grid))
                     next_obs.update({'DVS-Voxel-Grid': np.transpose(voxel_grid, (1, 2, 0))})
 
                 else:
                     voxel_grid = np.reshape(voxel_grid, (num_bins, height, width))
                     next_obs.update({"DVS-Voxel-Grid": np.transpose(voxel_grid, (1, 2, 0))})
-
-
-            elif one_modal == "E2VID-Frame":
-                next_obs.update({'DVS-Frame': self.dvs_data['img']})
-                if self.DENOISE:
-                    next_obs.update({'Denoised-DVS-frame': self.dvs_data['denoised_img']})
-
-                from run_dvs_rec import run_dvs_rec
-
-                dvs_rec_frame = run_dvs_rec(
-                    # x, y, p, t -> t, x, y, p
-                    self.dvs_data['events'][:, [3, 0, 1, 2]], self.rec_model,
-                    self.rl_image_size * self.num_cameras, self.rl_image_size,
-                    self.device, self.dvs_rec_args)
-                # print("dvs_rec_frame:", dvs_rec_frame.shape)  # (84, 420)
-                # print("dvs_rec_frame.min():", dvs_rec_frame.min())
-                # print("dvs_rec_frame.max():", dvs_rec_frame.max())
-                dvs_rec_frame = dvs_rec_frame[..., np.newaxis]  # (84, 420, 1)
-                # print("dvs_rec_frame.sahep:", dvs_rec_frame.shape)
-                next_obs.update({one_modal: dvs_rec_frame})
-                # next_obs.update({'perception': np.transpose(dvs_rec_frame, (2, 0, 1)).copy()})
 
             elif one_modal == "Depth-Frame":
                 # print("self.depth_data['img']:", self.depth_data['img'].shape)

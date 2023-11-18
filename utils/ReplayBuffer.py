@@ -7,15 +7,24 @@ import random
 import numpy as np
 from collections import deque
 
+from utils.random_crop import random_crop
 
 class ReplayBuffer(object):
     """Buffer to store environment transitions."""
-    def __init__(self, obs_shape, action_shape, capacity, batch_size, device):
+    def __init__(self, obs_shape, action_shape, capacity, batch_size, device,
+                 image_size=128,
+                 transform=None,
+                 auxiliary_task_batch_size=32,
+                 jumps=5):
         self.obs_shape = obs_shape
         self.capacity = capacity
         self.batch_size = batch_size
         self.device = device
         self.mtm_length = 10
+        self.auxiliary_task_batch_size = auxiliary_task_batch_size
+        self.image_size = image_size
+        self.transform = transform
+        self.jumps = jumps
 
         self.min_gap_length = 20
         self.max_gap_length = 40
@@ -62,6 +71,7 @@ class ReplayBuffer(object):
         self.curr_rewards = np.empty((capacity, 1), dtype=np.float32)
         self.rewards = np.empty((capacity, 1), dtype=np.float32)
         self.not_dones = np.empty((capacity, 1), dtype=np.float32)
+        self.real_dones = np.empty((capacity, 1), dtype=np.float32) # for auxiliary task
 
         self.idx = 0
         self.last_save = 0
@@ -102,10 +112,13 @@ class ReplayBuffer(object):
                 np.copyto(self.obses[self.idx], obs)
                 np.copyto(self.next_obses[self.idx], next_obs)
 
+
+
         np.copyto(self.actions[self.idx], action)
         np.copyto(self.curr_rewards[self.idx], curr_reward)
         np.copyto(self.rewards[self.idx], reward)
         np.copyto(self.not_dones[self.idx], not done)
+        np.copyto(self.real_dones[self.idx], isinstance(done, int))   # "not done" is always True
 
         self.idx = (self.idx + 1) % self.capacity
         self.full = self.full or self.idx == 0
@@ -223,15 +236,15 @@ class ReplayBuffer(object):
                 # obses = torch.as_tensor(obses, device=self.device).float()
                 # next_obses = torch.as_tensor(next_obses, device=self.device).float()
 
-                # 法2：每个batch里面event事件数量不定
+                # 法2：每个batch里面event事件数量不定，能节约很多很多显存
                 obses = []
                 next_obses = []
                 for iii in idxs:
                     tmp_obs = torch.as_tensor(self.obses[iii], device=self.device).float()
-                    obses.append(tmp_obs)
+                    obses.append(tmp_obs.clone())
 
                     tmp_next_obs = torch.as_tensor(self.next_obses[iii], device=self.device).float()
-                    next_obses.append(tmp_next_obs)
+                    next_obses.append(tmp_next_obs.clone())
 
             else:
                 # other single modal
@@ -249,6 +262,115 @@ class ReplayBuffer(object):
                                                                                    device=self.device)
         return obses, actions, curr_rewards, rewards, next_obses, not_dones
 
+
+    def sample_dm3dp(self):
+
+        min_pad = 10    # 两个样本idx的最小间距
+        # 起始点
+        start = np.random.uniform(
+            0,
+            self.capacity-min_pad*(self.batch_size+1)
+            if self.full else self.idx-min_pad*(self.batch_size+1))
+        # 终点
+        end = np.random.uniform(
+            self.capacity - min_pad * self.batch_size - 1
+            if self.full else self.idx - min_pad * self.batch_size - 1,
+            self.capacity - 1 if self.full else self.idx - 1,
+        )
+        #
+        idxs = np.around(np.linspace(start, end, self.batch_size)).astype(np.int)
+        np.random.shuffle(idxs)
+        np.random.shuffle(idxs)
+
+        rgb_obses = torch.as_tensor(self.rgb_obses[idxs], device=self.device).float()
+        dvs_obses = torch.as_tensor(self.dvs_obses[idxs], device=self.device).float()
+
+        next_rgb_obses = torch.as_tensor(self.next_rgb_obses[idxs], device=self.device).float()
+        next_dvs_obses = torch.as_tensor(self.next_dvs_obses[idxs], device=self.device).float()
+
+        obses = [rgb_obses, dvs_obses]
+        next_obses = [next_rgb_obses, next_dvs_obses]
+
+        actions = torch.as_tensor(self.actions[idxs], device=self.device)
+        curr_rewards = torch.as_tensor(self.curr_rewards[idxs], device=self.device)
+        rewards = torch.as_tensor(self.rewards[idxs], device=self.device)
+
+        not_dones = torch.as_tensor(self.not_dones[idxs], device=self.device)
+        return obses, actions, curr_rewards, rewards, next_obses, not_dones
+
+
+    def sample_spr(self):  # sample batch for auxiliary task
+        idxs = np.random.randint(0,
+                                 self.capacity - self.jumps -
+                                 1 if self.full else self.idx - self.jumps - 1,
+                                 size=self.auxiliary_task_batch_size * 2)
+        #  size=self.auxiliary_task_batch_size)
+        idxs = idxs.reshape(-1, 1)
+        step = np.arange(self.jumps + 1).reshape(1, -1)  # this is a range
+        idxs = idxs + step
+
+        real_dones = torch.as_tensor(self.real_dones[idxs], device=self.device)  # (B, jumps+1, 1)
+        # we add this to avoid sampling the episode boundaries
+        valid_idxs = torch.where((real_dones.mean(1) == 0).squeeze(-1))[0].cpu().numpy()
+        idxs = idxs[valid_idxs]  # (B, jumps+1)
+        idxs = idxs[:self.auxiliary_task_batch_size] if idxs.shape[0] >= self.auxiliary_task_batch_size else idxs
+        self.current_auxiliary_batch_size = idxs.shape[0]
+        # print("########: idxs", idxs.shape)
+
+        obses = torch.as_tensor(self.obses[idxs], device=self.device).float()  # (B, jumps+1, 3*3=9, 100, 100)
+        # print("########: obses", obses.shape)
+
+        next_obses = torch.as_tensor(self.next_obses[idxs], device=self.device).float()
+        actions = torch.as_tensor(self.actions[idxs], device=self.device)
+        rewards = torch.as_tensor(self.rewards[idxs], device=self.device)
+        not_dones = torch.as_tensor(self.not_dones[idxs], device=self.device)  # (B, jumps+1, 1)
+
+        spr_samples = {
+            'observation': obses.transpose(0, 1).unsqueeze(3),
+            'action': actions.transpose(0, 1),
+            'reward': rewards.transpose(0, 1),
+        }
+        return (*self.sample_aug(original_augment=True), spr_samples)
+
+
+    def sample_aug(self, original_augment=False):
+        idxs = np.random.randint(0,
+                                 self.capacity if self.full else self.idx,
+                                 size=self.batch_size)
+
+        obses = self.obses[idxs]
+        next_obses = self.next_obses[idxs]
+
+        if not original_augment:
+            obses = torch.as_tensor(obses, device=self.device).float()
+            next_obses = torch.as_tensor(next_obses,
+                                         device=self.device).float()
+            if hasattr(self, 'SPR'):
+                obses = self.SPR.transform(obses, augment=True)
+                next_obses = self.SPR.transform(next_obses, augment=True)
+            elif hasattr(self, 'CycDM'):
+                obses = self.CycDM.transform(obses, augment=True)
+                next_obses = self.CycDM.transform(next_obses, augment=True)
+        else:
+            # 1. Normal
+            # obses = random_crop(obses, self.image_size)
+            # next_obses = random_crop(next_obses, self.image_size)
+
+            # # 2. Deterministic
+            # obses = center_crop(obses, self.image_size)
+            # next_obses = center_crop(next_obses, self.image_size)
+
+            # # 3. Temporal Consistent
+            # obses, next_obses = sync_crop(obses, self.image_size, next_obses)
+
+            obses = torch.as_tensor(obses, device=self.device).float()
+            next_obses = torch.as_tensor(next_obses,
+                                         device=self.device).float()
+
+        actions = torch.as_tensor(self.actions[idxs], device=self.device)
+        rewards = torch.as_tensor(self.rewards[idxs], device=self.device)
+        not_dones = torch.as_tensor(self.not_dones[idxs], device=self.device)
+        return obses, actions, rewards, next_obses, not_dones
 
     def save(self, save_dir):
         if self.idx == self.last_save:

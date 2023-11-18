@@ -8,12 +8,12 @@ from collections import deque
 
 class FrameStack(gym.Wrapper):
 
-    def __init__(self, env, k, DENOISE, type="RGB-Frame"):
+    def __init__(self, env, k, type="RGB-Frame", suit="carla"):
         gym.Wrapper.__init__(self, env)
         self._k = k
         self._carousel = deque([], maxlen=k)
-        self.DENOISE = DENOISE
         self.type = type
+        self.suit = suit
 
         shp = env.observation_space.shape
         # import pdb; pdb.set_trace()
@@ -49,7 +49,6 @@ class FrameStack(gym.Wrapper):
         if self.perception_type.__contains__("+"):
             # 多模态
             modals = self.perception_type.split("+")
-
         else:
             modals = [self.perception_type]
 
@@ -89,7 +88,11 @@ class FrameStack(gym.Wrapper):
 
     def reset(self, selected_weather=None):
         # print("in reset")
-        obs = self.env.reset(selected_weather=selected_weather)
+        if self.suit == 'carla':
+            obs = self.env.reset(selected_weather=selected_weather)
+        elif self.suit == 'airsim':
+            obs = self.env.reset()
+
         # print("reset done")
 
         for _ in range(self._k):
@@ -126,7 +129,6 @@ class FrameStack(gym.Wrapper):
             modals = self.perception_type.split("+")
 
             stack_perception = []     # 每个模态一个列表
-
             for one_modal_idx in range(len(modals)):
 
                 # 分别stack每个模态的数据
@@ -154,7 +156,7 @@ class FrameStack(gym.Wrapper):
                         # print("@@@:", len(self._carousel[1]))
                         # print("@@@:", len(self._carousel[2]))
                         one_modal_stack_perception.append(self._carousel[one_k][one_modal_idx])
-
+                # print("one_modal_stack_perception:", len(one_modal_stack_perception), one_modal_stack_perception[0].shape)
                 # stack结束，放到总列表里面返回
                 stack_perception.append(
                     np.transpose(
@@ -167,8 +169,9 @@ class FrameStack(gym.Wrapper):
         else:
             # 单模态
             if self.perception_type == "DVS-Stream":
-                # print(self._carousel)
                 # print("self._carousel:", self._carousel[0].shape, self._carousel[1].shape, self._carousel[2].shape)
+                # print("self._carousel:", len(self._carousel[0]), len(self._carousel[1]), len(self._carousel[2]))
+                # print(self._carousel)
                 stack_perception = np.concatenate(self._carousel, axis=0).squeeze()
                 stack_perception = stack_perception[np.argsort(stack_perception[:, -1])[::-1]]  # times is like: [1, ...., 0]
 

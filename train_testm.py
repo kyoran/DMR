@@ -34,6 +34,9 @@ from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pack_sequence
 from env.CARLA_0_9_13_pithy.CarlaEnv_mix import CarlaEnv
 
 from agent.deepmdp_agent import DeepMDPAgent
+from agent.mlr_agent import MLRAgent
+from agent.spr_agent import SPRAgent
+from agent.sac_agent import SACAgent
 
 from utils.Logger import Logger
 from utils.dotdict import dotdict
@@ -49,16 +52,16 @@ def parse_args():
     # environment
     parser.add_argument('--suit', default='carla', choices=['carla', 'airsim'])
     parser.add_argument('--domain_name', default='highway')
-    parser.add_argument('--agent', default='deepmdp', type=str, choices=['baseline', 'bisim', 'deepmdp'])
+    parser.add_argument('--agent', default='deepmdp', type=str, choices=['baseline', 'bisim', 'deepmdp', 'mlr', 'sac', 'spr'])
     # gpu
     parser.add_argument('--device', default="gpu", type=str)
     parser.add_argument('--gpu_id', default="1", type=str)
-    # CARLA 0.9.14
+    # CARLA 0.9.13
     parser.add_argument('--max_fps', default=20, type=int)
     parser.add_argument('--min_fps', default=20, type=int)
-    parser.add_argument('--carla_rpc_port', default=4122, type=int)
-    parser.add_argument('--carla_tm_port', default=14122, type=int)
-    parser.add_argument('--carla_timeout', default=10, type=int)
+    parser.add_argument('--carla_rpc_port', default=12121, type=int)
+    parser.add_argument('--carla_tm_port', default=19121, type=int)
+    parser.add_argument('--carla_timeout', default=30, type=int)
     # environment
     parser.add_argument('--work_dir', default='/data/xuhr/logs/carla-vendors/', type=str)
     parser.add_argument('--selected_scenario', default='highway', type=str)
@@ -67,12 +70,15 @@ def parse_args():
                         choices=['RGB-Frame',
                                  'DVS-Frame',
                                  'DVS-Stream',
-                                 'E2VID-Frame',
+                                 # 'E2VID-Frame',
                                  'Depth-Frame',
                                  'DVS-Voxel-Grid',
+                                 'Depth-Frame',
+                                 'LiDAR-BEV',
                                  'RGB-Frame+DVS-Frame',
                                  'RGB-Frame+DVS-Voxel-Grid',
-                                 'MMMI',
+                                 'RGB-Frame+Depth-Frame',
+                                 'RGB-Frame+LiDAR-BEV',
                                  ])
 
     parser.add_argument('--LOG_FREQ', default=10000, type=int)
@@ -83,7 +89,7 @@ def parse_args():
     parser.add_argument('--min_stuck_steps', default=100, type=int)
     parser.add_argument('--max_episode_steps', default=400, type=int)
     parser.add_argument('--fov', default=60, type=int)
-    parser.add_argument('--rl_image_size', default=84, type=int)
+    parser.add_argument('--rl_image_size', default=256, type=int)
     parser.add_argument('--num_cameras', default=3, type=int)
     parser.add_argument('--action_repeat', default=1, type=int)
     parser.add_argument('--frame_stack', default=3, type=int)
@@ -111,6 +117,7 @@ def parse_args():
     # actor
     parser.add_argument('--actor_lr', default=1e-3, type=float)
     parser.add_argument('--actor_beta', default=0.9, type=float)
+    parser.add_argument('--action_type', default='continuous', type=str)
     parser.add_argument('--actor_log_std_min', default=-10, type=float)
     parser.add_argument('--actor_log_std_max', default=2, type=float)
     parser.add_argument('--actor_update_freq', default=2, type=int)
@@ -163,9 +170,8 @@ def parse_args():
     parser.add_argument('--BEV', default=False, action='store_true')
     parser.add_argument('--transition_model_type', default='', type=str, choices=['', 'deterministic', 'probabilistic', 'ensemble'])
     parser.add_argument('--render', default=False, action='store_true')
-    parser.add_argument('--do_carla_metrics', default=False, action='store_true')
+    parser.add_argument('--do_metrics', default=False, action='store_true')
     parser.add_argument('--is_spectator', default=False, action='store_true')
-    parser.add_argument('--DENOISE', default=False, action='store_true')
     args = parser.parse_args()
 
     return args
@@ -177,14 +183,13 @@ def make_env(args, device):
             weather_params = json.load(fff)
         with open('./env/CARLA_0_9_13_pithy/scenario.json', 'r', encoding='utf8') as fff:
             scenario_params = json.load(fff)
-        with open('./tools/rpg_e2vid/dvs_rec_args.json', 'r', encoding='utf8') as fff:
-            dvs_rec_args = json.load(fff)
-            dvs_rec_args = dotdict(dvs_rec_args)
+        # with open('./tools/rpg_e2vid/dvs_rec_args.json', 'r', encoding='utf8') as fff:
+        #     dvs_rec_args = json.load(fff)
+        #     dvs_rec_args = dotdict(dvs_rec_args)
 
         env = CarlaEnv(
             weather_params=weather_params,
             scenario_params=scenario_params,
-            dvs_rec_args=dvs_rec_args,
             selected_scenario=args.domain_name,
             selected_weather=args.selected_weather,
             # selected_speed=args.selected_speed,
@@ -202,52 +207,68 @@ def make_env(args, device):
             max_episode_steps=args.max_episode_steps,
             frame_skip=args.frame_skip,
             ego_auto_pilot=False,
-            DENOISE=args.DENOISE,
             TPV=args.TPV,
             is_spectator=args.is_spectator
         )
-        # eval_env = env
-        # eval_env = CarlaEnv(
-        #     weather_params=weather_params,
-        #     scenario_params=scenario_params,
-        #     dvs_rec_args=dvs_rec_args,
-        #     selected_scenario=args.domain_name,
-        #     selected_weather=args.selected_weather,
-        #     # selected_speed=args.selected_speed,
-        #     carla_rpc_port=args.carla_rpc_port_eval,
-        #     carla_tm_port=args.carla_tm_port_eval,
-        #     carla_timeout=args.carla_timeout,
-        #     perception_type=args.perception_type,
-        #     num_cameras=args.num_cameras,
-        #     rl_image_size=args.rl_image_size,
-        #     fov=args.fov,
-        #     device=device,
-        #     max_fps=args.max_fps,
-        #     min_fps=args.min_fps,
-        #     min_stuck_steps=args.min_stuck_steps,
-        #     max_episode_steps=args.max_episode_steps,
-        #     frame_skip=args.frame_skip,
-        #     ego_auto_pilot=False,
-        #     DENOISE=args.DENOISE,
-        #     TPV=args.TPV,
-        #     is_spectator=args.is_spectator
-        # )
 
-        # if args.encoder_type.startswith('pixel'):
-        env = FrameStack(env, k=args.frame_stack, DENOISE=args.DENOISE, type=args.perception_type)
+        env = FrameStack(env, k=args.frame_stack, type=args.perception_type, suit=args.suit)
         eval_env = env
 
         # eval_env = utils.FrameStack(eval_env, k=args.frame_stack, type=args.perception_type)
 
 
     elif args.suit == 'airsim':
-        pass
+        from gym.envs.registration import register
+
+        register(
+            id='airsim-event-v0',
+            entry_point='env.AirSim:EvAirSimDrone',
+        )
+        env = gym.make(
+            "airsim-event-v0",
+            ip_address="127.0.0.1",
+            obs_type="event_stream",
+            perception_type=args.perception_type,
+            step_length=0.1,
+            stack=3,
+            frame_skip=args.frame_skip,
+            tc=True,
+            data_len=3,
+            ls=8,
+            lane_num=2,
+            rl_image_size=args.rl_image_size,
+            max_episode_steps=args.max_episode_steps,
+            goal=[0, -100, 0],
+            debug=False,
+        )
+        eval_env = gym.make(
+            "airsim-event-v0",
+            ip_address="127.0.0.1",
+            obs_type="event_stream",
+            perception_type=args.perception_type,
+            step_length=0.1,
+            stack=3,
+            frame_skip=args.frame_skip,
+            tc=True,
+            data_len=3,
+            ls=8,
+            lane_num=2,
+            rl_image_size=args.rl_image_size,
+            max_episode_steps=args.max_episode_steps,
+            goal=[0, -100, 0],
+            debug=False,
+        )
+
+        env = FrameStack(env, k=args.frame_stack, type=args.perception_type, suit=args.suit)
+        eval_env = FrameStack(eval_env, k=args.frame_stack, type=args.perception_type, suit=args.suit)
+
+        obs = env.reset()
+        obs = eval_env.reset()
+        # print("!!!obs.shape", obs["perception"][0].shape, obs["perception"][1].shape)
+        # eval_env = env
 
     print("env.observation_space:", env.observation_space)
     print("env.action_space:", env.action_space)
-
-    assert env.action_space.low.min() >= -1
-    assert env.action_space.high.max() <= 1
 
     return env, eval_env
 
@@ -255,6 +276,44 @@ def make_env(args, device):
 def make_agent(obs_shape, action_shape, args, device, embed_viz_dir):
     if args.agent == 'deepmdp':
         agent = DeepMDPAgent(
+            obs_shape=obs_shape,
+            action_shape=action_shape,
+            action_type=args.action_type,
+            device=device,
+            hidden_dim=args.hidden_dim,
+            discount=args.discount,
+            init_temperature=args.init_temperature,
+            alpha_lr=args.alpha_lr,
+            alpha_beta=args.alpha_beta,
+            actor_lr=args.actor_lr,
+            actor_beta=args.actor_beta,
+            actor_log_std_min=args.actor_log_std_min,
+            actor_log_std_max=args.actor_log_std_max,
+            actor_update_freq=args.actor_update_freq,
+            encoder_stride=args.encoder_stride,
+            critic_lr=args.critic_lr,
+            critic_beta=args.critic_beta,
+            critic_tau=args.critic_tau,
+            critic_target_update_freq=args.critic_target_update_freq,
+            perception_type=args.perception_type,
+            encoder_type=args.encoder_type,
+            encoder_feature_dim=args.encoder_feature_dim,
+            encoder_lr=args.encoder_lr,
+            encoder_tau=args.encoder_tau,
+            action_model_update_freq=args.action_model_update_freq,
+            transition_reward_model_update_freq=args.transition_reward_model_update_freq,
+            decoder_type=args.decoder_type,
+            decoder_lr=args.decoder_lr,
+            decoder_update_freq=args.decoder_update_freq,
+            decoder_weight_lambda=args.decoder_weight_lambda,
+            transition_model_type=args.transition_model_type,
+            num_layers=args.num_layers,
+            num_filters=args.num_filters,
+            LOG_FREQ=args.LOG_FREQ,
+            embed_viz_dir=embed_viz_dir,
+        )
+    elif args.agent == 'sac':
+        agent = SACAgent(
             obs_shape=obs_shape,
             action_shape=action_shape,
             device=device,
@@ -288,7 +347,110 @@ def make_agent(obs_shape, action_shape, args, device, embed_viz_dir):
             num_layers=args.num_layers,
             num_filters=args.num_filters,
             LOG_FREQ=args.LOG_FREQ,
-            embed_viz_dir=embed_viz_dir,
+        )
+    elif args.agent == 'mlr':
+        return MLRAgent(
+            obs_shape=obs_shape,
+            action_shape=action_shape,
+            device=device,
+            # augmentation=args.augmentation,
+            # transition_model_type=args.transition_model_type,
+            # transition_model_layer_width=args.transition_model_layer_width,
+            # jumps=args.jumps,
+            # latent_dim=args.latent_dim,
+            # num_aug_actions=args.num_aug_actions,
+            # loss_space=args.loss_space,
+            # bp_mode=args.bp_mode,
+            # cycle_steps=args.cycle_steps,
+            # cycle_mode=args.cycle_mode,
+            # fp_loss_weight=args.fp_loss_weight,
+            # bp_loss_weight=args.bp_loss_weight,
+            # rc_loss_weight=args.rc_loss_weight,
+            # vc_loss_weight=args.vc_loss_weight,
+            # reward_loss_weight=args.reward_loss_weight,
+            # time_offset=args.time_offset,
+            # momentum_tau=args.momentum_tau,
+            # aug_prob=args.aug_prob,
+            # auxiliary_task_lr=args.auxiliary_task_lr,
+            # hidden_dim=args.hidden_dim,
+            # discount=args.discount,
+            # init_temperature=args.init_temperature,
+            alpha_lr=args.alpha_lr,
+            alpha_beta=args.alpha_beta,
+            actor_lr=args.actor_lr,
+            actor_beta=args.actor_beta,
+            actor_log_std_min=args.actor_log_std_min,
+            actor_log_std_max=args.actor_log_std_max,
+            actor_update_freq=args.actor_update_freq,
+            critic_lr=args.critic_lr,
+            critic_beta=args.critic_beta,
+            critic_tau=args.critic_tau,
+            critic_target_update_freq=args.critic_target_update_freq,
+            encoder_type=args.encoder_type,
+            encoder_feature_dim=args.encoder_feature_dim,
+            encoder_lr=args.encoder_lr,
+            encoder_tau=args.encoder_tau,
+            num_layers=args.num_layers,
+            num_filters=args.num_filters,
+            # log_interval=args.log_interval,
+            # detach_encoder=args.detach_encoder,
+            # curl_latent_dim=args.curl_latent_dim,
+            # sigma=args.sigma,
+            # mask_ratio=args.mask_ratio,
+            # patch_size=args.patch_size,
+            # block_size=args.block_size,
+            # num_attn_layers=args.num_attn_layers
+        )
+
+    elif args.agent == 'spr':
+        return SPRAgent(
+            obs_shape=obs_shape,
+            action_shape=action_shape,
+            device=device,
+            # augmentation=args.augmentation,
+            # transition_model_type=args.transition_model_type,
+            # transition_model_layer_width=args.transition_model_layer_width,
+            # jumps=args.jumps,
+            # latent_dim=args.latent_dim,
+            # num_aug_actions=args.num_aug_actions,
+            # loss_space=args.loss_space,
+            # bp_mode=args.bp_mode,
+            # cycle_steps=args.cycle_steps,
+            # cycle_mode=args.cycle_mode,
+            # fp_loss_weight=args.fp_loss_weight,
+            # bp_loss_weight=args.bp_loss_weight,
+            # rc_loss_weight=args.rc_loss_weight,
+            # vc_loss_weight=args.vc_loss_weight,
+            # reward_loss_weight=args.reward_loss_weight,
+            # time_offset=args.time_offset,
+            # momentum_tau=args.momentum_tau,
+            # aug_prob=args.aug_prob,
+            # auxiliary_task_lr=args.auxiliary_task_lr,
+            # hidden_dim=args.hidden_dim,
+            # discount=args.discount,
+            # init_temperature=args.init_temperature,
+            alpha_lr=args.alpha_lr,
+            alpha_beta=args.alpha_beta,
+            actor_lr=args.actor_lr,
+            actor_beta=args.actor_beta,
+            actor_log_std_min=args.actor_log_std_min,
+            actor_log_std_max=args.actor_log_std_max,
+            actor_update_freq=args.actor_update_freq,
+            critic_lr=args.critic_lr,
+            critic_beta=args.critic_beta,
+            critic_tau=args.critic_tau,
+            critic_target_update_freq=args.critic_target_update_freq,
+            encoder_type=args.encoder_type,
+            encoder_feature_dim=args.encoder_feature_dim,
+            encoder_lr=args.encoder_lr,
+            encoder_tau=args.encoder_tau,
+            # num_layers=args.num_layers,
+            # num_filters=args.num_filters,
+            log_interval=args.LOG_FREQ,
+            LOG_FREQ=args.LOG_FREQ,
+            # detach_encoder=args.detach_encoder,
+            # curl_latent_dim=args.curl_latent_dim,
+            # sigma=args.sigma
         )
 
     if args.load_encoder:
@@ -341,10 +503,12 @@ def main():
         embed_viz_dir=embed_viz_dir,
     )
 
+
     L = Logger(args.work_dir, use_tb=args.save_tb)
 
     episode, episode_reward, done = 0, 0, True
     start_time = time.time()
+
 
     for step in range(args.num_train_steps):
 
@@ -360,8 +524,9 @@ def main():
             # evaluate agent periodically
             if episode % (args.EVAL_FREQ_EPISODE) == 0:
             # if step % args.EVAL_FREQ_EPISODE == 0:
-                evaluate(args, image_dir, eval_env, agent, video, args.num_eval_episodes, L, step, args.selected_weather, device=device,
-                         do_carla_metrics=args.do_carla_metrics, embed_viz_dir=embed_viz_dir)
+                evaluate(args, image_dir, eval_env, agent, video, args.num_eval_episodes, L, step, args.selected_weather,
+                         device=device, do_metrics=args.do_metrics, embed_viz_dir=embed_viz_dir,
+                         suit=args.suit)
 
             if episode % args.SAVE_MODEL_FREQ == 0:
                 if args.save_model:
@@ -372,6 +537,7 @@ def main():
             L.log('train/episode_reward', episode_reward, step)
 
             obs = env.reset(selected_weather=args.selected_weather)
+
             done = False
             episode_reward = 0
             episode_step = 0
@@ -394,9 +560,10 @@ def main():
             #         print("num_updates:", num_updates)
             for _ in range(num_updates):
                 agent.update(replay_buffer, L, step)
+                # print("!!!!!", _)
 
         curr_reward = reward
-        next_obs, reward, done, _ = env.step(action)
+        next_obs, reward, done, _ = env.step(action) 
         #     print("next_obs.shape:", next_obs.shape)   # (9, 84, 420)
 
         #     print('dvs_stack_frames:', obs["dvs_stack_frames"][dvs_valid_idx,:,:].shape,
@@ -420,8 +587,9 @@ def main():
 
 
     agent.save(model_dir, step)
-    evaluate(args, image_dir, eval_env, agent, video, args.num_eval_episodes, L, step,args.selected_weather,
-             do_carla_metrics=args.do_carla_metrics)
+    evaluate(args, image_dir, eval_env, agent, video, args.num_eval_episodes, L, step, args.selected_weather,
+             device=device, do_metrics=args.do_metrics, embed_viz_dir=embed_viz_dir,
+             suit=args.suit)
 
 if __name__ == '__main__':
     main()
