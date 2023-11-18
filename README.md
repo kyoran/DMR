@@ -31,8 +31,16 @@ policy performance compared to state-of-the-art approaches.
 
 ## Several typical visual examples
 
+<div align=center>
+    <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
+        alt="framework" width="95%"/>
+    <br>
+    <b>Fig 2. Frames and events based RL.</b>
+</div>
 
-## Repository Requirements
+
+
+## Repository requirements
 - create python environment using conda:
 ```shell
 conda create -n carla-py37 python=3.7 -y
@@ -50,7 +58,7 @@ pip install carla-0.9.13-cp37-cp37m-manylinux_2_27_x86_64.whl
 ```
 
 
-## DMR Training & Evaluation
+## DMR training & evaluation
 - running CARLA by using:
 ```shell
 DISPLAY= ./CarlaUE4.sh -opengl -RenderOffScreen -carla-rpc-port=12121  # headless mode
