@@ -38,7 +38,10 @@ policy performance compared to state-of-the-art approaches.
     <b>Fig 2. Frames and events based RL.</b>
 </div>
 
-<div align="center" style="overflow: hidden;">>
+- 1
+- 2
+
+<div style="overflow: hidden;">>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
         alt="framework" width="45%" style="float: left; margin-right: 20px;"/>
     <p>Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213.</p>
