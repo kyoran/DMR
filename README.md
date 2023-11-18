@@ -64,7 +64,9 @@ policy performance compared to state-of-the-art approaches.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/><br/>
         <br/>
     </td>
-    <td align="center" width="60%"></td>
+    <td align="center" width="60%" rowspan="3">
+        123123 123 12 3  312 312 312 3
+    </td>
 </tr>
 <tr>
     <td align="center" width="40%"></td>
