@@ -44,7 +44,7 @@ hello world
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
         alt="framework" style="width: 55%; height: auto; margin-right: 20px;"
     />
-    <p>Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213.</p>
+    <p>Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 21123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 2133 213.</p>
 </div>
 
 1231
