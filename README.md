@@ -33,46 +33,25 @@ policy performance compared to state-of-the-art approaches.
 
 ## Several typical visual examples
 
+- Motivational study
 <div align="center">
 <table>
 <tr>
-    <td align="center" width="45%"><img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="motivation"/><br><b><i>Fig 2. Frames and events based RL.</i></b></td>
-    <td align="left" width="55%">
+    <td align="center" width="55%"><img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
+        alt="motivation"/><br />
+            <b><i>Fig 2. Frames and events based RL.</i></b>
+    </td>
+    <td align="left" width="45%">
         (i) In the first row, insufficient ambient light causes RGB underexposure, leading to the overlooking of the front pedestrian and resulting in a forward policy aligned with the lane direction that could cause collisions.
-        <br/>        
+        <br/>   <br/>     
         (ii) In the second row, the lack of texture in DVS causes the person and the background to blend, leading to a left-turn policy to avoid the highlighted area on the right.
-        <br/>        
+        <br/>   <br/> 
         (iii) In contrast, our method (third row) can fully take advantage of RGB and DVS to extract task-relevant information and eliminate task-irrelevant and noisy information through joint TD and DMR learning, thereby obtaining an optimal evasion policy. 
     </td>
 </tr>
 </table>
 </div>
 
-
-<div align=center>
-    <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="framework" width="45%"/>
-    <br>
-    <b>Fig 2. Frames and events based RL.</b>
-</div>
-
-hello world
-
-<div style="display: flex; align-items: center;">>
-    <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="framework" style="width: 55%; height: auto; margin-right: 20px;"
-    />
-    <p>Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 21123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213123 123 123 12 321 3213 12 312 321 312 321 321 321 213 2133 213.</p>
-</div>
-
-1231
-2421
-41
- 2
-41 
-
-![motivation](./vendors/motivation.png) Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213
 
 
 ## Repository requirements
