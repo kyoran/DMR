@@ -56,13 +56,13 @@ policy performance compared to state-of-the-art approaches.
 <div align="center">
 <table>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/>
     </td>
-    <td align="center" width="60%" rowspan="3">
+    <td align="left" width="50%" rowspan="3">
         (i) First row depicts the original observations and corresponding CAMs of DMR. 
             In the extremely low-light condition, DVS can capture the front pedestrian 
             while RGB camera suffers from exposure failure.
@@ -75,22 +75,24 @@ policy performance compared to state-of-the-art approaches.
     </td>
 </tr>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb-noise.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs-noise.png"/>
     </td>
 </tr>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-rgb.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="25%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
 </table>
+<br>
+<b><i>Fig 3. A case analysis of decomposition effect.</i></b>
 </div>
 
 
