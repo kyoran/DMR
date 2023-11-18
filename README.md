@@ -27,13 +27,13 @@ policy performance compared to state-of-the-art approaches.
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/framework.png" 
         alt="framework" width="95%"/>
     <br>
-    <b>Fig 1. Illustration of the proposed framework</b>
+    <b><i>Fig 1. Illustration of the proposed framework</i></b>
 </div>
 
 
 ## Several typical visual examples
 
-- Motivational study
+- Illustration of our motivation
 <div align="center">
 <table>
 <tr>
@@ -51,6 +51,34 @@ policy performance compared to state-of-the-art approaches.
 </tr>
 </table>
 </div>
+
+- Illustration of decomposition capability of DMR
+<div align="center">
+<table>
+<tr>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/rgb.png" alt="rgb"/><br/>
+        <br/>
+    </td>
+    <td align="center" width="20%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/dvs.png" alt="dvs"/><br/>
+        <br/>
+    </td>
+    <td align="center" width="60%"></td>
+</tr>
+<tr>
+    <td align="center" width="40%"></td>
+    <td align="center" width="60%"></td>
+</tr>
+<tr>
+    <td align="center" width="40%"></td>
+    <td align="center" width="60%"></td>
+</tr>
+</table>
+</div>
+
+
+- A long sequence demonstration
 
 
 
