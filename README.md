@@ -42,10 +42,19 @@ hello world
 
 <div style="display: flex; align-items: center;">>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="framework" style="width: 45%; height: auto; margin-right: 20px;"
+        alt="framework" style="width: 55%; height: auto; margin-right: 20px;"
     />
     <p>Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213.</p>
 </div>
+
+1231
+2421
+41
+ 2
+41 
+
+![motivation](./vendors/motivation.png) Fig 2. Frames and events based RL 123 123 123 12 321 3213 12 312 321 312 321 321 321 213 213
+
 
 ## Repository requirements
 - create python environment using conda:
