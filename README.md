@@ -65,7 +65,15 @@ policy performance compared to state-of-the-art approaches.
         <br/>
     </td>
     <td align="center" width="60%" rowspan="3">
-        123123 123 12 3  312 312 312 3
+        (i) First row depicts the original observations and corresponding CAMs of DMR. 
+            In the extremely low-light condition, DVS can capture the front pedestrian 
+            while RGB camera suffers from exposure failure.
+        <br/><br/>
+        (ii) It can be seen from second row that RGB noise highlights the high beam region on the road, 
+            while DVS noise is activated across a broader region, with the highest activation on the building.
+        <br/><br/>
+        (iii) The co-features in the third row attentively grasp the pedestrian and the right roadside 
+              simultaneously, which are crucial for driving decision-making.
     </td>
 </tr>
 <tr>
