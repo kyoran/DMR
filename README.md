@@ -23,14 +23,16 @@ policy performance compared to state-of-the-art approaches.
 The overview of DMR learning pipeline:
 <div align=center>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/framework.png" 
-        alt="framework" width="85%"/>
+        alt="framework" width="95%"/>
     <br>
     <b>Fig 1. Illustration of the proposed framework</b>
 </div>
 
-![图片描述](vendors/framework.png)
 
-## REPOSITORY REQUIREMENTS
+## Several typical visual examples
+
+
+## Repository Requirements
 - create python environment using conda:
 ```shell
 conda create -n carla-py37 python=3.7 -y
@@ -39,15 +41,16 @@ pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --e
 pip install -U gym==0.17.3 cloudpickle==1.5.0 numba==0.51.2 wincertstore==0.2 tornado==4.5.3 msgpack-python==0.5.6 msgpack-rpc-python==0.4.1 stable-baselines3==0.8.0 opencv-python==4.7.0.72 imageio[ffmpeg]==2.28.0 dotmap==1.3.30 termcolor==2.3.0 matplotlib==3.5.3 seaborn-image==0.4.4 scipy==1.7.3 info-nce-pytorch==0.1.4 spikingjelly cupy-cuda117 scikit-image tensorboard kornia timm einops -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-- download Carla-0.9.13 from https://github.com/carla-simulator/carla/releases, 
-then unzip Carla and install pythonAPI via:
+- download Carla-0.9.13 from https://github.com/carla-simulator/carla/releases
+
+- unzip Carla and install pythonAPI via:
 ```shell
 cd carla_root_directory/PythonAPI/carla/dist
 pip install carla-0.9.13-cp37-cp37m-manylinux_2_27_x86_64.whl
 ```
 
 
-## DMR TRAINING & EVALUATION
+## DMR Training & Evaluation
 - running CARLA by using:
 ```shell
 DISPLAY= ./CarlaUE4.sh -opengl -RenderOffScreen -carla-rpc-port=12121  # headless mode
@@ -58,4 +61,5 @@ DISPLAY= ./CarlaUE4.sh -opengl -RenderOffScreen -carla-rpc-port=12121  # headles
 bash auto_run_batch_modal.sh
 ```
 
-- you can select different scenarios or weathers by setting parameters in 
+- key parameters:
+  - --selected_scenario: 
