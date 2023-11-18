@@ -33,7 +33,7 @@ policy performance compared to state-of-the-art approaches.
 
 <div align=center>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="framework" width="95%"/>
+        alt="framework" width="30%"/>
     <br>
     <b>Fig 2. Frames and events based RL.</b>
 </div>
