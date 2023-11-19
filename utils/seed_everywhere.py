@@ -1,6 +1,5 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
-# Created by kyoRan on 2022/10/16 10:48
 
 import torch
 import numpy as np
