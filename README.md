@@ -95,13 +95,13 @@ are contrasted with the co-features to maximize their difference.
 <div align="center">
 <table>
 <tr>
-    <td>Time</td>
-    <td>RGB Frame</td>
-    <td>DVS Events</td>
-    <td>RGB Noise</td>
-    <td>DVS Noise</td>
-    <td>Co-features<br>on RGB</td>
-    <td>Co-features<br>on DVS</td>
+    <td align="center">Time</td>
+    <td align="center">RGB Frame</td>
+    <td align="center">DVS Events</td>
+    <td align="center">RGB Noise</td>
+    <td align="center">DVS Noise</td>
+    <td align="center">Co-features<br>on RGB</td>
+    <td align="center">Co-features<br>on DVS</td>
 </tr>
 <tr>
     <td align="center" width="10%">Time #1</td>
@@ -172,10 +172,10 @@ are contrasted with the co-features to maximize their difference.
 
 The table above illustrates a vehicle with high beam headlights approaching from 
 a distance to near in the opposite lane at three different time instances, Time #1, #2, and #3. 
-It is clear that the RGB noise emphasizes the vehicle's high beam headlights and the buildings on the right, 
-whereas the DVS noise focuses on the dense event region on the right. 
+It is clear that the **_RGB noise_** emphasizes the vehicle's high beam headlights and the buildings on the right, 
+whereas the **_DVS noise_** focuses on the dense event region on the right. 
 Both types of noise contain a substantial amount of task-irrelevant information, covering unnecessary broad areas. 
-In contrast, the co-features generates a more focused area that is relevant for RL by excluding irrelevant regions.
+In contrast, the **_co-features_** generates a more focused area that is relevant for RL by excluding irrelevant regions.
 These areas precisely cover the vehicle on the opposite lane and the right roadside,
 which are crucial cues for driving policies.
 
