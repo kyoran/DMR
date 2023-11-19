@@ -18,9 +18,7 @@ decomposes the inputs into three distinct components: combined task-relevant
 features (**_co-features_**), **_RGB-specific noise_**, and **_DVS-specific noise_**. The co-features 
 represent the full information from both modalities that is relevant to the RL task; 
 the two noise components, each constrained by a data reconstruction loss to avoid information leak, 
-are contrasted with the co-features to maximize their difference. Extensive experiments demonstrate that, 
-by explicitly separating the different types of information, our approach achieves substantially improved 
-policy performance compared to state-of-the-art approaches.
+are contrasted with the co-features to maximize their difference.
 
 **The overview of DMR learning framework**:
 <div align=center>
@@ -215,5 +213,12 @@ DISPLAY= ./CarlaUE4.sh -opengl -RenderOffScreen -carla-rpc-port=12121  # headles
 bash auto_run_batch_modal.sh
 ```
 
-- key parameters:
-  - --selected_scenario: 
+- choices of some key parameters in `train_testm.py`:
+  - selected_scenario: 'jaywalk', 'highbeam'
+  - selected_weather: 'midnight', 'hard_rain'
+  - perception_type: 
+    - single-modality perception: 'RGB-Frame', 'DVS-Frame', 'Depth-Frame', 'DVS-Voxel-Grid', 'LiDAR-BEV', 
+    - multi-modality perception: 'RGB-Frame+DVS-Frame', 'RGB-Frame+DVS-Voxel-Grid', 'RGB-Frame+Depth-Frame', 'RGB-Frame+LiDAR-BEV'
+  - encoder_type:
+    - single-modality encoder: 'pixelCarla098'
+    - multi-modality encoder: 'DMR_CNN', 'DMR_SNN', 'pixelCrossFusion', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
