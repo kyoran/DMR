@@ -26,8 +26,7 @@ policy performance compared to state-of-the-art approaches.
 <div align=center>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/framework.png" 
         alt="framework" width="95%"/>
-    <br>
-    <b><i>Fig 1. Illustration of the proposed framework</i></b>
+    <caption><b><i>Fig 1. Illustration of the proposed framework</i></b></caption>
 </div>
 
 
@@ -38,8 +37,7 @@ policy performance compared to state-of-the-art approaches.
 <table>
 <tr>
     <td align="center" width="55%"><img src="https://github.com/kyoran/DMR/blob/main/vendors/motivation.png" 
-        alt="motivation"/><br />
-            <b><i>Fig 2. Frames and events based RL.</i></b>
+        alt="motivation"/>
     </td>
     <td align="left" width="45%">
         (i) In the first row, insufficient ambient light causes RGB underexposure, leading to the overlooking of the front pedestrian and resulting in a forward policy aligned with the lane direction that could cause collisions.
@@ -49,6 +47,7 @@ policy performance compared to state-of-the-art approaches.
         (iii) In contrast, our method (third row) can fully take advantage of RGB and DVS to extract task-relevant information and eliminate task-irrelevant and noisy information through joint TD and DMR learning, thereby obtaining an optimal evasion policy. 
     </td>
 </tr>
+<caption><b><i>Fig 2. Frames and events based RL.</i></b></caption>
 </table>
 </div>
 
@@ -90,7 +89,7 @@ policy performance compared to state-of-the-art approaches.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
-<caption style="caption-side: bottom;"><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
+<caption><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
 </table>
 <br>
 
