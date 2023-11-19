@@ -8,7 +8,7 @@ This repository contains the official code from ''DMR: Decomposed Multi-Modality
 
 ## Abstract
 We explore visual reinforcement learning (RL) using two complementary visual modalities: 
-frame-based RGB camera and event-based Dynamic Vision Sensor (DVS). 
+**_frame-based RGB camera_** and **_event-based Dynamic Vision Sensor (DVS)_**. 
 Existing multi-modality visual RL methods often encounter challenges 
 in effectively extracting task-relevant information from multiple modalities 
 while suppressing the increased noise, only using indirect reward signals 
@@ -26,7 +26,6 @@ policy performance compared to state-of-the-art approaches.
 <div align=center>
     <img src="https://github.com/kyoran/DMR/blob/main/vendors/framework.png" 
         alt="framework" width="95%"/>
-    <caption><b><i>Fig 1. Illustration of the proposed framework</i></b></caption>
 </div>
 
 
@@ -47,7 +46,6 @@ policy performance compared to state-of-the-art approaches.
         (iii) In contrast, our method (third row) can fully take advantage of RGB and DVS to extract task-relevant information and eliminate task-irrelevant and noisy information through joint TD and DMR learning, thereby obtaining an optimal evasion policy. 
     </td>
 </tr>
-<caption><b><i>Fig 2. Frames and events based RL.</i></b></caption>
 </table>
 </div>
 
@@ -89,7 +87,6 @@ policy performance compared to state-of-the-art approaches.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
-<caption><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
 </table>
 <br>
 
@@ -173,10 +170,20 @@ policy performance compared to state-of-the-art approaches.
 </tr>
 </table>
 <br>
-<b><i>Fig 4. A case analysis of decomposition effect.</i></b>
 </div>
 
+The table above illustrates a vehicle with high beam headlights approaching from 
+a distance to near in the opposite lane at three different time instances, Time #1, #2, and #3. 
+It is clear that the RGB noise emphasizes the vehicle's high beam headlights and the buildings on the right, 
+whereas the DVS noise focuses on the dense event region on the right. 
+Both types of noise contain a substantial amount of task-irrelevant information, covering unnecessary broad areas. 
+In contrast, the co-features generates a more focused area that is relevant for RL by excluding irrelevant regions.
+These areas precisely cover the vehicle on the opposite lane and the right roadside,
+which are crucial cues for driving policies.
 
+The variations in Class Activation Mapping (CAM) closely mirror the alterations in the real scene throughout the entire process.
+When the vehicle approaches, the RGB noise broadens due to illumination changes, and the co-features focus more on the vehicle. 
+In co-features, there is also a gradual increase in emphasis on the left roadside, and the CAM uniformly cover the right roadside.
 
 
 ## Repository requirements
