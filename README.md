@@ -90,7 +90,7 @@ policy performance compared to state-of-the-art approaches.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
-<caption><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
+<caption style="caption-side: bottom;"><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
 </table>
 <br>
 
