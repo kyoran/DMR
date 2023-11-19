@@ -90,13 +90,93 @@ policy performance compared to state-of-the-art approaches.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
+<caption><b><i>Fig 3. A case analysis of decomposition effect.</i></b></caption>
 </table>
 <br>
-<b><i>Fig 3. A case analysis of decomposition effect.</i></b>
+
 </div>
 
 
 - A long sequence demonstration
+<div align="center">
+<table>
+<tr>
+    <td>Time</td>
+    <td>RGB Frame</td>
+    <td>DVS Events</td>
+    <td>RGB Noise</td>
+    <td>DVS Noise</td>
+    <td>Co-features<br>on RGB</td>
+    <td>Co-features<br>on DVS</td>
+</tr>
+<tr>
+    <td align="center" width="10%">Time #1</td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-rgb.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-dvs.jpg"/>
+    </td>
+    <td align="center" width="15%">
+          <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-rgb-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-dvs-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-rgb-co.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/1-dvs-co.jpg"/>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="10%">Time #2</td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-rgb.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-dvs.jpg"/>
+    </td>
+    <td align="center" width="15%">
+          <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-rgb-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-dvs-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-rgb-co.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/2-dvs-co.jpg"/>
+    </td>
+</tr>
+<tr>
+    <td align="center" width="10%">Time #3</td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-rgb.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-dvs.jpg"/>
+    </td>
+    <td align="center" width="15%">
+          <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-rgb-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-dvs-noise.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-rgb-co.jpg"/>
+    </td>
+    <td align="center" width="15%">
+        <img src="https://github.com/kyoran/DMR/blob/main/vendors/sequence/3-dvs-co.jpg"/>
+    </td>
+</tr>
+</table>
+<br>
+<b><i>Fig 4. A case analysis of decomposition effect.</i></b>
+</div>
+
 
 
 
