@@ -118,22 +118,22 @@ class CarlaEnv(object):
         self.rgb_camera_bp.set_attribute('fov', str(self.fov))
         self.rgb_camera_bp.set_attribute('enable_postprocess_effects', str(True))   # a set of post-process effects is applied to the image to create a more realistic feel
         self.rgb_camera_bp.set_attribute('exposure_max_bright', '20.0')      # over-exposure
-        self.rgb_camera_bp.set_attribute('exposure_min_bright', '12.0')      # under-exposure，默认是10，越小越亮
-        # self.rgb_camera_bp.set_attribute('exposure_min_bright', '9')      # under-exposure，默认是10，越小越亮
+        self.rgb_camera_bp.set_attribute('exposure_min_bright', '12.0')      # under-exposure, default:10
+        # self.rgb_camera_bp.set_attribute('exposure_min_bright', '9')      # under-exposure, default:10
         self.rgb_camera_bp.set_attribute('blur_amount', '1.0')
         self.rgb_camera_bp.set_attribute('motion_blur_intensity', '1.0')
         self.rgb_camera_bp.set_attribute('motion_blur_max_distortion', '0.8')
         self.rgb_camera_bp.set_attribute('motion_blur_min_object_screen_size', '0.4')
         self.rgb_camera_bp.set_attribute('exposure_speed_up', '3.0')    # Speed at which the adaptation occurs from dark to bright environment.
         self.rgb_camera_bp.set_attribute('exposure_speed_down', '1.0')  # Speed at which the adaptation occurs from bright to dark environment.
-        self.rgb_camera_bp.set_attribute('lens_flare_intensity', '0.2')  # 	Intensity for the lens flare post-process effect （光晕效果）
-        self.rgb_camera_bp.set_attribute('shutter_speed', '100')  # The camera shutter speed in seconds 快门速度
+        self.rgb_camera_bp.set_attribute('lens_flare_intensity', '0.2')  # 	Intensity for the lens flare post-process effect
+        self.rgb_camera_bp.set_attribute('shutter_speed', '100')  # The camera shutter speed in seconds
 
 
 
         self.dvs_camera_bp = self.bp_lib.find('sensor.camera.dvs')
         self.dvs_camera_bp.set_attribute('sensor_tick', f'{1 / self.max_fps}')
-        self.dvs_camera_bp.set_attribute('positive_threshold', str(0.15))      # 光强变化阈值，0.3是默认值，下雨几乎没噪声，0.2时雨点太少，0.1时雨点太多
+        self.dvs_camera_bp.set_attribute('positive_threshold', str(0.15))
         self.dvs_camera_bp.set_attribute('negative_threshold', str(0.15))
         self.dvs_camera_bp.set_attribute('sigma_positive_threshold', str(0.1))  # noise
         self.dvs_camera_bp.set_attribute('sigma_negative_threshold', str(0.1))
@@ -1121,9 +1121,9 @@ class CarlaEnv(object):
                 # print("@@@:", points.shape,)
                 self.lidar_data['PCD'] = points
 
-                pos = np.array(points[:, :2])       # 原本图像的坐标起点是图片的中心
+                pos = np.array(points[:, :2])
                 # print(pos.max(), pos.min())
-                pos += (0.5 * lidar_range, 0.5 * lidar_range)    # 转变为左上角起点
+                pos += (0.5 * lidar_range, 0.5 * lidar_range)
                 pos = np.fabs(pos)
                 pos = pos.astype(np.int32)
                 pos = np.reshape(pos, (-1, 2))
