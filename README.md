@@ -53,10 +53,10 @@ are contrasted with the co-features to maximize their difference.
 <div align="center">
 <table>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/>
     </td>
     <td align="left" width="60%" rowspan="3">
@@ -72,18 +72,18 @@ are contrasted with the co-features to maximize their difference.
     </td>
 </tr>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/rgb-noise.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs-noise.png"/>
     </td>
 </tr>
 <tr>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-rgb.png"/>
     </td>
-    <td align="center" width="20%">
+    <td align="center" width="15%">
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/co-dvs.png"/>
     </td>
 </tr>
