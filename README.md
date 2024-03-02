@@ -3,6 +3,8 @@
 
 This repository contains the official code from ''DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning''
 
+- [2024/08/01]: DMR will be extended and submitted to IEEE T-PAMI.
+- [2024/02/26]: DMR is accepted to CVPR 2024 !!!.
 - [2022/11/18]: DMR is currently under review for CVPR 2024.
 
 
@@ -58,11 +60,11 @@ are contrasted with the co-features to maximize their difference.
         <img src="https://github.com/kyoran/DMR/blob/main/vendors/case/dvs.png"/>
     </td>
     <td align="left" width="60%" rowspan="3">
-        (i) First row depicts the original observations and corresponding CAMs of DMR. 
-            In the extremely low-light condition, DVS can capture the front pedestrian 
+        (i) The first row depicts the original observations and corresponding CAMs of DMR. 
+            In extremely low-light conditions, DVS can capture the front pedestrian 
             while RGB camera suffers from exposure failure.
         <br/><br/><br/>
-        (ii) It can be seen from second row that RGB noise highlights the high beam region on the road, 
+        (ii) The second row shows that RGB noise highlights the high beam region on the road, 
             while DVS noise is activated across a broader region, with the highest activation on the building.
         <br/><br/><br/>
         (iii) The co-features in the third row attentively grasp the pedestrian and the right roadside 
@@ -222,3 +224,14 @@ bash auto_run_batch_modal.sh
   - encoder_type:
     - single-modality encoder: 'pixelCarla098'
     - multi-modality encoder: 'DMR_CNN', 'DMR_SNN', 'pixelCrossFusion', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
+
+## Bibtex
+If this work is helpful for your research, please consider citing the following BibTeX entry.
+```
+@article{xu2024dmr, 
+      title={DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning}, 
+      author={Haoran Xu and Peixi Peng and Guang Tan and Yuan Li and Xinhai Xu and Yonghong Tian},
+      journal={CVPR},
+      year={2024}
+}
+```
