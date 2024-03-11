@@ -4,7 +4,7 @@
 This repository contains the official code from ''DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning''
 
 - [2024/08/01]: DMR will be extended and submitted to IEEE T-PAMI.
-- [2024/02/26]: DMR is accepted to CVPR 2024 !!!.
+- [2024/02/26]: DMR is accepted to CVPR 2024 !!!
 - [2022/11/18]: DMR is currently under review for CVPR 2024.
 
 
