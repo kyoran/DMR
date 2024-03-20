@@ -222,7 +222,7 @@ bash auto_run_batch_modal.sh
     - multi-modality perception: 'RGB-Frame+DVS-Frame', 'RGB-Frame+DVS-Voxel-Grid', 'RGB-Frame+Depth-Frame', 'RGB-Frame+LiDAR-BEV'
   - encoder_type:
     - single-modality encoder: 'pixelCarla098'
-    - multi-modality encoder: 'DMR_CNN', 'DMR_SNN', 'pixelCrossFusion', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
+    - multi-modality encoder: 'DMR_CNN', 'DMR_SNN', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
 
 ## Bibtex
 If this work is helpful for your research, please consider citing the following BibTeX entry.
