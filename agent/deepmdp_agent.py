@@ -747,23 +747,23 @@ class DeepMDPAgent(object):
         #     sep=True if self.encoder_type == "pixelCon" else False,
         #     multi=True if isinstance(self.obs_shape, list) and
         #                   len(self.obs_shape) >= 2 else False)
-        if step <= 5000:   # airsim
-            obs, action, _, reward, next_obs, not_done = replay_buffer.sample_dm3dp()
+        # if step <= 5000:   # airsim
+        #     obs, action, _, reward, next_obs, not_done = replay_buffer.sample_dm3dp()
 
-            GAMMA = 1.0
-            trans_loss = self.update_transition_reward_model_pixelDMR(obs, action, next_obs, reward, L, step)
-            con_loss, consistency_params = self.update_consistency(obs, action, next_obs, L, step)
-            total_loss = trans_loss + GAMMA * con_loss
+        #     GAMMA = 1.0
+        #     trans_loss = self.update_transition_reward_model_pixelDMR(obs, action, next_obs, reward, L, step)
+        #     con_loss, consistency_params = self.update_consistency(obs, action, next_obs, L, step)
+        #     total_loss = trans_loss + GAMMA * con_loss
 
-            self.encoder_optimizer.zero_grad()
-            self.decoder_optimizer.zero_grad()
-            total_loss.backward()
-            # loss.backward(retain_graph=True)
-            self.encoder_optimizer.step()
-            self.decoder_optimizer.step()
+        #     self.encoder_optimizer.zero_grad()
+        #     self.decoder_optimizer.zero_grad()
+        #     total_loss.backward()
+        #     # loss.backward(retain_graph=True)
+        #     self.encoder_optimizer.step()
+        #     self.decoder_optimizer.step()
 
-            self.update_decoder(obs, action, next_obs, L, step)
-            return
+        #     self.update_decoder(obs, action, next_obs, L, step)
+        #     return
 
         if self.encoder_type == "pixelConNewV4" \
                 or self.encoder_type == "pixelConNewV4_Repel" \
@@ -775,11 +775,11 @@ class DeepMDPAgent(object):
         else:
             obs, action, _, reward, next_obs, not_done = replay_buffer.sample(
                 sep=False, multi=True if isinstance(self.obs_shape, list) and len(self.obs_shape) >= 2 else False)
-        # 这是第一类method取样本的
+        
         # if self.encoder_type == "pixelCon":
         #     batch_size = action.shape[0]
-        #     row = np.arange(0, batch_size)    # 行都需选的，每一行是一个batch
-        #     col = np.random.randint(0, 10, batch_size)  # 选第几列
+        #     row = np.arange(0, batch_size)    
+        #     col = np.random.randint(0, 10, batch_size)  
         #
         #     obs = [obs[0][row, col, :, :, :], obs[1][row, col, :, :, :]]
         #     action = action[row, col, :]
@@ -826,7 +826,7 @@ class DeepMDPAgent(object):
 
             elif self.encoder_type == "pixelCatSep":
                 self.update_transition_reward_model_pixelCatSep(obs, action, next_obs, reward, L, step)
-            # 默认单模态
+            
             # else:
             #     self.update_transition_reward_model(obs, action, next_obs, reward, L, step)
 
@@ -856,11 +856,11 @@ class DeepMDPAgent(object):
                 )
 
         # decoder
-        # if (self.encoder_type == "pixelConNewV4"
-        #     or self.encoder_type == "pixelConNewV4_Rec"
-        #     or self.encoder_type == "DMR_SNN"
-        #     or self.encoder_type == "DMR_CNN") and step % self.decoder_update_freq == 0:
-        #     self.update_decoder(obs, action, next_obs, L, step)
+        if (self.encoder_type == "pixelConNewV4"
+            or self.encoder_type == "pixelConNewV4_Rec"
+            or self.encoder_type == "DMR_SNN"
+            or self.encoder_type == "DMR_CNN") and step % self.decoder_update_freq == 0:
+            self.update_decoder(obs, action, next_obs, L, step)
 
 
     def save(self, model_dir, step):
