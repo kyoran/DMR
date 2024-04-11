@@ -3,7 +3,7 @@
 
 This repository contains the official code from ''DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning''
 
-- [2024/02/26]: DMR is accepted to CVPR 2024 !!!
+- [2024/02/26]: DMR is accepted to CVPR 2024.
 - [2022/11/18]: DMR is currently under review for CVPR 2024.
 
 
@@ -218,11 +218,11 @@ bash auto_run_batch_modal.sh
   - selected_scenario: 'jaywalk', 'highbeam'
   - selected_weather: 'midnight', 'hard_rain'
   - perception_type: 
-    - single-modality perception: 'RGB-Frame', 'DVS-Frame', 'Depth-Frame', 'DVS-Voxel-Grid', 'LiDAR-BEV', 
+    - single-modality perception: 'RGB-Frame', 'DVS-Frame', 'DVS-Voxel-Grid', 'LiDAR-BEV', 'Depth-Frame'
     - multi-modality perception: 'RGB-Frame+DVS-Frame', 'RGB-Frame+DVS-Voxel-Grid', 'RGB-Frame+Depth-Frame', 'RGB-Frame+LiDAR-BEV'
   - encoder_type:
     - single-modality encoder: 'pixelCarla098'
-    - multi-modality encoder: 'DMR_CNN', 'DMR_SNN', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
+    - multi-modality encoder: 'DMR_CNN', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
 
 ## Bibtex
 If this work is helpful for your research, please consider citing the following BibTeX entry.
