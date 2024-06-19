@@ -6,6 +6,17 @@ This repository contains the official code from ''DMR: Decomposed Multi-Modality
 - [2024/02/26]: DMR is accepted to CVPR 2024.
 - [2022/11/18]: DMR is currently under review for CVPR 2024.
 
+## Bibtex
+If this work is helpful for your research, please consider citing the following BibTeX entry.
+```
+@inproceedings{xu2024dmr,
+  title={DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning},
+  author={Xu, Haoran and Peng, Peixi and Tan, Guang and Li, Yuan and Xu, Xinhai and Tian, Yonghong},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={26508--26518},
+  year={2024}
+}
+```
 
 ## Abstract
 We explore visual reinforcement learning (RL) using two complementary visual modalities: 
@@ -224,13 +235,4 @@ bash auto_run_batch_modal.sh
     - single-modality encoder: 'pixelCarla098'
     - multi-modality encoder: 'DMR_CNN', 'pixelEFNet', 'pixelFPNNet', 'pixelRENet', ...
 
-## Bibtex
-If this work is helpful for your research, please consider citing the following BibTeX entry.
-```
-@article{xu2024dmr, 
-      title={DMR: Decomposed Multi-Modality Representations for Frames and Events Fusion in Visual Reinforcement Learning}, 
-      author={Haoran Xu and Peixi Peng and Guang Tan and Yuan Li and Xinhai Xu and Yonghong Tian},
-      journal={CVPR},
-      year={2024}
-}
-```
+
