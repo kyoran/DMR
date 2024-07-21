@@ -284,20 +284,6 @@ class DeepMDPAgent(object):
         # set target entropy to -|A|
         self.target_entropy = -np.prod(action_shape)
 
-        # self.decoder = None
-        # if decoder_type == 'pixel':
-        #     # create decoder
-        #     if encoder_type == "pixelHybridActionMaskV5":
-        #         decoder_type = "HybridActionMaskV5Decoder"
-        #
-        #     self.decoder = make_decoder(
-        #         decoder_type, obs_shape,
-        #         encoder_feature_dim if encoder_type != "pixelMultiHeadHybridMask" else encoder_feature_dim * 2,
-        #         num_layers,
-        #         num_filters
-        #     ).to(device)
-        #     self.decoder.apply(weight_init)
-        #     decoder_params += list(self.decoder.parameters())
 
         self.decoder_optimizer = torch.optim.Adam(
             decoder_params,
@@ -336,11 +322,6 @@ class DeepMDPAgent(object):
         if hasattr(self, 'decoder_dvs'):
             self.decoder_dvs.train(training)
 
-        # if self.decoder is not None:
-        #     self.decoder.train(training)
-        # if len(self.decoder) != 0:
-        #     for one_decoder in self.decoder:
-        #         one_decoder.train(training)
 
     @property
     def alpha(self):
