@@ -2,7 +2,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from spikingjelly.activation_based import functional
 
 import utils
 from encoder import make_encoder
@@ -117,7 +116,6 @@ class Actor(nn.Module):
         self, obs, compute_pi=True, compute_log_pi=True, detach_encoder=False
     ):
         final_fea, _ = self.encoder(obs, detach=detach_encoder)
-        functional.reset_net(self.encoder)
 
         mu, log_std = self.trunk(final_fea).chunk(2, dim=-1)
 
@@ -240,7 +238,6 @@ class Critic(nn.Module):
     def forward(self, obs, action, detach_encoder=False):
         # detach_encoder allows to stop gradient propogation to encoder
         final_fea, _ = self.encoder(obs, detach=detach_encoder)
-        functional.reset_net(self.encoder)
 
         # print("final_fea.shape:", final_fea.shape)
         if self.action_type == 'continuous':
