@@ -202,7 +202,7 @@ In co-features, there is also a gradual increase in emphasis on the left roadsid
 conda create -n carla-py37 python=3.7 -y
 conda activate carla-py37
 pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117
-pip install -U gym==0.17.3 cloudpickle==1.5.0 numba==0.51.2 wincertstore==0.2 tornado==4.5.3 msgpack-python==0.5.6 msgpack-rpc-python==0.4.1 stable-baselines3==0.8.0 opencv-python==4.7.0.72 imageio[ffmpeg]==2.28.0 dotmap==1.3.30 termcolor==2.3.0 matplotlib==3.5.3 seaborn-image==0.4.4 scipy==1.7.3 info-nce-pytorch==0.1.4 spikingjelly cupy-cuda117 scikit-image tensorboard kornia timm einops -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -U gym==0.17.3 cloudpickle==1.5.0 numba==0.51.2 wincertstore==0.2 tornado==4.5.3 msgpack-python==0.5.6 msgpack-rpc-python==0.4.1 stable-baselines3==0.8.0 opencv-python==4.7.0.72 imageio[ffmpeg]==2.28.0 dotmap==1.3.30 termcolor==2.3.0 matplotlib==3.5.3 seaborn-image==0.4.4 scipy==1.7.3 scikit-image tensorboard -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
 - download Carla-0.9.13 from https://github.com/carla-simulator/carla/releases
