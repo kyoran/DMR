@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import info_nce
-from spikingjelly.activation_based import functional
 
 
 from utils.soft_update_params import soft_update_params
@@ -436,9 +434,7 @@ class DeepMDPAgent(object):
 
     def update_transition_reward_model_pixelDMR(self, obs, action, next_obs, reward, L, step):
         fuse_h, [rgb_h, con_h, dvs_h] = self.critic.encoder(obs)
-        functional.reset_net(self.critic.encoder)
         next_fuse_h, [next_rgb_h, next_con_h, next_dvs_h] = self.critic.encoder(next_obs)
-        functional.reset_net(self.critic.encoder)
 
         pred_next_fuse_latent_mu, pred_next_fuse_latent_sigma = self.transition_model_con(torch.cat([con_h, action], dim=1))
         if pred_next_fuse_latent_sigma is None: pred_next_fuse_latent_sigma = torch.ones_like(pred_next_fuse_latent_mu)
@@ -583,7 +579,6 @@ class DeepMDPAgent(object):
             consistency_params = {}  # 用于可视化
             ###############################################################
             _, [rgb_h_query, com_h_query, dvs_h_query] = self.critic.encoder(obs)  # queries: N x z_dim
-            functional.reset_net(self.critic.encoder)
 
             with torch.no_grad():
                 final_query = self.global_target_classifier(torch.cat([
@@ -605,7 +600,6 @@ class DeepMDPAgent(object):
 
             with torch.no_grad():  # no gradient to keys
                 _, [rgb_h_key, com_h_key, dvs_h_key] = self.critic_target.encoder(obs)  # keys: N x z_dim
-                functional.reset_net(self.critic_target.encoder)
 
             final_key = self.global_classifier(torch.cat([
                 rgb_h_key, com_h_key, dvs_h_key
@@ -665,7 +659,6 @@ class DeepMDPAgent(object):
     def update_decoder(self, obs, action, target_obs, L, step):
 
         _, [rgb_h, _, dvs_h] = self.critic.encoder(obs)
-        functional.reset_net(self.critic.encoder)
 
         rec_rgb_obs = self.rec_decoder_rgb(rgb_h)
         rec_dvs_obs = self.rec_decoder_dvs(dvs_h)
@@ -683,7 +676,6 @@ class DeepMDPAgent(object):
 
     def update_transition_reward_model(self, obs, action, next_obs, reward, L, step):
         h, _ = self.critic.encoder(obs)
-        functional.reset_net(self.critic.encoder)
         # print("h.nan:", torch.any(torch.isnan(h)))
         #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         # 增加action embedding
@@ -696,7 +688,6 @@ class DeepMDPAgent(object):
             pred_next_latent_sigma = torch.ones_like(pred_next_latent_mu)
 
         next_h, _ = self.critic.encoder(next_obs)
-        functional.reset_net(self.critic.encoder)
         # print("next_h.nan:", torch.any(torch.isnan(next_h)))
         diff = (pred_next_latent_mu - next_h.detach()) / pred_next_latent_sigma
         # print("pred_next_latent_mu:", pred_next_latent_mu)
